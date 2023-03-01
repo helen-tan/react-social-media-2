@@ -1,12 +1,25 @@
 import React from 'react'
+import Axios from 'axios'
 import Page from './Page'
 
 const HomeGuest = () => {
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        
+        try {
+            await Axios.post('http://localhost:8080/register', {
+                username: "test",
+                email: "test@test.com",
+                password: "qwerty123456"
+            })
+
+            console.log("User was successfully created.")
+
+        } catch (err) {
+            console.log("There was an error.")
+            // console.log(err)
+        }
     }
 
     return (
