@@ -152,3 +152,31 @@ exports.profileFollowing = async function (req, res) {
     res.status(500).send("Error")
   }
 }
+
+exports.authenticateUser = async function (req, res) {
+  try {
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      // Get token from header
+      token = req.headers.authorization.split(' ')[1]
+
+      // Verify token
+      const decoded = jwt.verify(token, process.env.JWTSECRET)
+
+      // Get username (unique identifier) from token/ Set req.username to username and controller will see it
+      // console.log(decoded) //E.g. { username: 'admin', iat: 1665043915, exp: 1667635915 }
+      req.username = decoded.username
+    }
+
+    const loggedInUser = req.username
+    console.log("Logged in user is:", req.username)
+
+    return res.status(200).send({
+      loggedInUser
+    })
+
+  } catch (e) {
+    console.log(e)
+    return res.status(500).send("Unable to identitfy user")
+
+  }
+}

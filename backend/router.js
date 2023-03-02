@@ -23,6 +23,9 @@ apiRouter.post("/search", postController.search)
 apiRouter.post("/doesUsernameExist", userController.doesUsernameExist)
 apiRouter.post("/doesEmailExist", userController.doesEmailExist)
 
+// Get username of logged in user
+apiRouter.get("/authuser", userController.authenticateUser)
+
 // profile related routes
 apiRouter.post("/profile/:username", userController.ifUserExists, userController.sharedProfileData, userController.profileBasicData)
 apiRouter.get("/profile/:username/posts", userController.ifUserExists, userController.apiGetPostsByUsername)
