@@ -1,10 +1,23 @@
 import React from 'react'
+import Axios from 'axios'
 import Page from './Page'
 
 const CreatePost = () => {
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+
+        try {
+            Axios.post("/create-post", )
+
+        } catch (err) {
+            console.log("There was a problem.")
+        }
+    }
+
     return (
         <Page title="Create New Post">
-            <form>
+            <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="post-title" className="text-muted mb-1">
                         <small>Title</small>

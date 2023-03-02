@@ -10,7 +10,7 @@ const HeaderLoginForm = (props) => {
         e.preventDefault()
 
         try {
-            const response = await Axios.post("http://localhost:8080/login", {
+            const response = await Axios.post("/login", {
                 username,
                 password
             })

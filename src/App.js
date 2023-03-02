@@ -12,6 +12,10 @@ import About from './components/About';
 import Terms from './components/Terms';
 import CreatePost from "./components/CreatePost";
 
+// Set the domain (beginning portion) for all axios request
+import Axios from "axios"
+Axios.defaults.baseURL = 'http://localhost:8080'
+
 function App() {
   const [loggedIn, setLoggedIn] = useState(Boolean(sessionStorage.getItem("token")))
 
