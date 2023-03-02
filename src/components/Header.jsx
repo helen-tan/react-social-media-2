@@ -4,7 +4,7 @@ import HeaderLoginForm from './HeaderLoginForm'
 import HeaderLoggedIn from './HeaderLoggedIn'
 
 const Header = () => {
-    const [loggedIn, setLoggedIn] = useState(false)
+    const [loggedIn, setLoggedIn] = useState(Boolean(sessionStorage.getItem("token")))
 
     return (
         <header className="header-bar bg-primary mb-3">

@@ -4,6 +4,7 @@ import Axios from 'axios'
 const HeaderLoginForm = (props) => {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
+    const [loggedInUser, setLoggedInUser] = useState("") 
 
     const handleLogin = async (e) => {
         e.preventDefault()
@@ -15,8 +16,15 @@ const HeaderLoginForm = (props) => {
             })
             // console.log(response.data)
 
-            if(response.data) {
+            if (response.data) {
                 console.log(response.data)
+
+                // Save token & image to sessionStorage
+                sessionStorage.setItem("token", response.data.token)
+                sessionStorage.setItem("avatar", response.data.avatar)
+                // Set logged in user
+                setLoggedInUser(response.data.username)
+
                 setUsername("")
                 setPassword("")
 
