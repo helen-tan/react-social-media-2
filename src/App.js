@@ -10,6 +10,7 @@ import Home from "./components/Home";
 import Footer from './components/Footer';
 import About from './components/About';
 import Terms from './components/Terms';
+import CreatePost from "./components/CreatePost";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(Boolean(sessionStorage.getItem("token")))
@@ -23,6 +24,7 @@ function App() {
         <Route path="/home" element={ loggedIn ? <Home /> : <HomeGuest /> } />
         <Route path="/about-us" element={<About />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/create-post" element={<CreatePost />}/>
       </Routes>
 
       <Footer />
