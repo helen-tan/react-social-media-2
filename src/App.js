@@ -20,7 +20,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Navigate to="/home" />} /> {/*Redirect to homepage for this route*/}
-        <Route path="/home" element={<Home />} />
+        <Route path="/home" element={ loggedIn ? <Home /> : <HomeGuest /> } />
         <Route path="/about-us" element={<About />} />
         <Route path="/terms" element={<Terms />} />
       </Routes>
