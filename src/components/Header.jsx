@@ -14,7 +14,7 @@ const Header = (props) => {
                     </Link>
                 </h4>
                 
-                { props.loggedIn ? <HeaderLoggedIn setLoggedIn={props.setLoggedIn}/> : <HeaderLoginForm setLoggedIn={props.setLoggedIn}/> }
+                { props.loggedIn ? <HeaderLoggedIn /> : <HeaderLoginForm /> }
             </div>
         </header>
     )

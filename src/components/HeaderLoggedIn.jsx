@@ -1,10 +1,13 @@
-import React from 'react'
+import React , { useContext } from 'react'
 import { Link } from 'react-router-dom'
+import ExampleContext from '../ExampleContext'
 
 const HeaderLoggedIn = (props) => {
+    // Get setLoggedIn method in the parent App.js from the Context
+    const { setLoggedIn } = useContext(ExampleContext)
 
     const handleLogout = () => {
-        props.setLoggedIn(false)
+        setLoggedIn(false)
         // Remove token & avatar from sessionStorage
         sessionStorage.removeItem("token")
         sessionStorage.removeItem("avatar")
