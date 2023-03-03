@@ -12,6 +12,7 @@ import About from './components/About';
 import Terms from './components/Terms';
 import CreatePost from "./components/CreatePost";
 import ViewSinglePost from "./components/ViewSinglePost";
+import FlashMessages from "./components/FlashMessages";
 
 // Set the domain (beginning portion) for all axios request
 import Axios from "axios"
@@ -19,9 +20,15 @@ Axios.defaults.baseURL = 'http://localhost:8080'
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(Boolean(sessionStorage.getItem("token")))
+  const [flashMessages, setFlashMessages] = useState([])
+
+  const addFlashMessage = (msg) => {
+    setFlashMessages(prev => prev.concat(msg))
+  }
 
   return (
     <BrowserRouter>
+      <FlashMessages messages={flashMessages}/>
       <Header loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>
 
       <Routes>
@@ -29,7 +36,7 @@ function App() {
         <Route path="/home" element={ loggedIn ? <Home /> : <HomeGuest /> } />
         <Route path="/about-us" element={<About />} />
         <Route path="/terms" element={<Terms />} />
-        <Route path="/create-post" element={<CreatePost />}/>
+        <Route path="/create-post" element={<CreatePost addFlashMessage={addFlashMessage}/>}/>
         <Route path="/post/:id" element={<ViewSinglePost />}/>
       </Routes>
 
