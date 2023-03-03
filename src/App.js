@@ -11,6 +11,7 @@ import Footer from './components/Footer';
 import About from './components/About';
 import Terms from './components/Terms';
 import CreatePost from "./components/CreatePost";
+import ViewSinglePost from "./components/ViewSinglePost";
 
 // Set the domain (beginning portion) for all axios request
 import Axios from "axios"
@@ -29,6 +30,7 @@ function App() {
         <Route path="/about-us" element={<About />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/create-post" element={<CreatePost />}/>
+        <Route path="/post/:id" element={<ViewSinglePost />}/>
       </Routes>
 
       <Footer />
