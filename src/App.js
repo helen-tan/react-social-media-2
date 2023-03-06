@@ -13,6 +13,7 @@ import Terms from './components/Terms';
 import CreatePost from "./components/CreatePost";
 import ViewSinglePost from "./components/ViewSinglePost";
 import FlashMessages from "./components/FlashMessages";
+import Profile from "./components/Profile";
 
 // Context
 import StateContext from "./StateContext";
@@ -84,6 +85,7 @@ function App() {
             <Route path="/terms" element={<Terms />} />
             <Route path="/create-post" element={<CreatePost />} />
             <Route path="/post/:id" element={<ViewSinglePost />} />
+            <Route path="/profile/:username/*" element={<Profile/>} />
           </Routes>
 
           <Footer />
