@@ -1,13 +1,13 @@
 import React , { useContext } from 'react'
 import { Link } from 'react-router-dom'
-import ExampleContext from '../ExampleContext'
+import DispatchContext from '../DispatchContext'
 
 const HeaderLoggedIn = (props) => {
     // Get setLoggedIn method in the parent App.js from the Context
-    const { setLoggedIn } = useContext(ExampleContext)
+    const globalDispatch = useContext(DispatchContext)
 
     const handleLogout = () => {
-        setLoggedIn(false)
+        globalDispatch({ type: "logout" }) // instead of setLoggedIn(false)
         // Remove token & avatar from sessionStorage
         sessionStorage.removeItem("token")
         sessionStorage.removeItem("avatar")

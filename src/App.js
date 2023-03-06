@@ -15,7 +15,8 @@ import ViewSinglePost from "./components/ViewSinglePost";
 import FlashMessages from "./components/FlashMessages";
 
 // Context
-import ExampleContext from "./ExampleContext";
+import StateContext from "./StateContext";
+import DispatchContext from "./DispatchContext";
 
 // Set the domain (beginning portion) for all axios request
 import Axios from "axios"
@@ -41,32 +42,38 @@ function App() {
   // useReducer
   const [state, dispatch] = useReducer(ourReducer, initialState)
 
-  // Global State (useState)
-  const [loggedIn, setLoggedIn] = useState(Boolean(sessionStorage.getItem("token")))
-  const [flashMessages, setFlashMessages] = useState([])
+  // Global State (useState) - handled by Reducer now
+  // const [loggedIn, setLoggedIn] = useState(Boolean(sessionStorage.getItem("token")))
+  // const [flashMessages, setFlashMessages] = useState([])
 
-  const addFlashMessage = (msg) => {
-    setFlashMessages(prev => prev.concat(msg))
-  }
+  // function handled by Reducer
+  // const addFlashMessage = (msg) => {
+  //   setFlashMessages(prev => prev.concat(msg))
+  // }
 
   return (
-    <ExampleContext.Provider value={{ addFlashMessage, setLoggedIn }}>
-      <BrowserRouter>
-        <FlashMessages messages={flashMessages} />
-        <Header loggedIn={loggedIn} />
+    <StateContext.Provider value={state}>
+      <DispatchContext.Provider value={dispatch}>
 
-        <Routes>
-          <Route path="/" element={<Navigate to="/home" />} /> {/*Redirect to homepage for this route*/}
-          <Route path="/home" element={loggedIn ? <Home /> : <HomeGuest />} />
-          <Route path="/about-us" element={<About />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/create-post" element={<CreatePost />} />
-          <Route path="/post/:id" element={<ViewSinglePost />} />
-        </Routes>
+        <BrowserRouter>
+          <FlashMessages messages={state.flashMessages} />
+          <Header />
 
-        <Footer />
-      </BrowserRouter>
-    </ExampleContext.Provider>
+          <Routes>
+            <Route path="/" element={<Navigate to="/home" />} /> {/*Redirect to homepage for this route*/}
+            <Route path="/home" element={state.loggedIn ? <Home /> : <HomeGuest />} />
+            <Route path="/about-us" element={<About />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/create-post" element={<CreatePost />} />
+            <Route path="/post/:id" element={<ViewSinglePost />} />
+          </Routes>
+
+          <Footer />
+        </BrowserRouter>
+
+      </DispatchContext.Provider>
+    </StateContext.Provider>
+
   );
 }
 

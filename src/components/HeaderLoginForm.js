@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import Axios from 'axios'
-import ExampleContext from '../ExampleContext'
+import DispatchContext from '../DispatchContext'
 
 const HeaderLoginForm = (props) => {
     const [username, setUsername] = useState("")
@@ -8,7 +8,7 @@ const HeaderLoginForm = (props) => {
     const [loggedInUser, setLoggedInUser] = useState("")
     
     // Get setLoggedIn method in the parent App.js from the Context
-    const { setLoggedIn } = useContext(ExampleContext)
+    const globalDispatch = useContext(DispatchContext)
 
     const handleLogin = async (e) => {
         e.preventDefault()
@@ -32,7 +32,8 @@ const HeaderLoginForm = (props) => {
                 setUsername("")
                 setPassword("")
 
-                setLoggedIn(true)
+                // setLoggedIn(true)
+                globalDispatch({ type: "login" })
             } else {
                 console.log("Incorrect username or password")
             }

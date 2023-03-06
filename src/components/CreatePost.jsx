@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
-import ExampleContext from '../ExampleContext'
+import DispatchContext from '../DispatchContext'
 import Axios from 'axios'
 import Page from './Page'
 
@@ -9,8 +9,8 @@ const CreatePost = (props) => {
     const [body, setBody] = useState("")
 
     const navigate = useNavigate();
-    // Get methods from the Context
-    const { addFlashMessage } = useContext(ExampleContext)
+    // Get state update logic (previously methods in pure Context) from the Context (combined with Reducer)
+    const globalDispatch = useContext(DispatchContext)
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -27,7 +27,11 @@ const CreatePost = (props) => {
             setBody("")
 
             // Redirect to new post url
-            addFlashMessage("Post successfully created!")
+            globalDispatch({
+                type:"flashMessage",
+                value: "Post successfully created!"
+            })
+            // addFlashMessage("Post successfully created!") // use globalDispatch instead
             navigate(`/post/${response.data}`);
 
         } catch (err) {
