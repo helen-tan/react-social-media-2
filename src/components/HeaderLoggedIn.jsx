@@ -1,9 +1,11 @@
-import React , { useContext } from 'react'
+import React, { useState, useContext } from 'react'
+import Axios from 'axios'
 import { Link } from 'react-router-dom'
 import DispatchContext from '../DispatchContext'
 import StateContext from '../StateContext'
 
 const HeaderLoggedIn = (props) => {
+
     // Get setLoggedIn method in the parent App.js from the Context
     const globalDispatch = useContext(DispatchContext)
     const globalState = useContext(StateContext)
@@ -24,9 +26,9 @@ const HeaderLoggedIn = (props) => {
                 <i className="fas fa-comment"></i>
                 <span className="chat-count-badge text-white"> </span>
             </span>
-            <a href="#" className="mr-2">
+            <Link to={`/profile/${globalState.user.username}`} className="mr-2">
                 <img className="small-header-avatar" src={globalState.user.avatar} />
-            </a>
+            </Link>
             <Link to="/create-post" className="btn btn-sm btn-success mr-2">
                 Create Post
             </Link>

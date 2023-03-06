@@ -24,21 +24,23 @@ import Axios from "axios"
 Axios.defaults.baseURL = 'http://localhost:8080'
 
 function App() {
+
   // initial value for useReducer state
   const initialState = {
     loggedIn: Boolean(sessionStorage.getItem("token")),
     flashMessages: [],
     user: {
       token: sessionStorage.getItem("token"),
-      avatar: sessionStorage.getItem("avatar")
+      avatar: sessionStorage.getItem("avatar"),
+      username: sessionStorage.getItem("username")
     }
   }
 
   function ourReducer(state, action) {
     switch (action.type) {
       case "login":
-        return { 
-          loggedIn: true, 
+        return {
+          loggedIn: true,
           flashMessages: state.flashMessages,
           user: action.data
         }
@@ -51,13 +53,17 @@ function App() {
   // useReducer
   const [state, dispatch] = useReducer(ourReducer, initialState)
 
+
   useEffect(() => {
     if (state.loggedIn) {
       sessionStorage.setItem("token", state.user.token)
       sessionStorage.setItem("avatar", state.user.avatar)
+      sessionStorage.setItem("username", state.user.username)
+
     } else {
       sessionStorage.removeItem("token")
       sessionStorage.removeItem("avatar")
+      sessionStorage.removeItem("username")
     }
   }, [state.loggedIn])
 
@@ -85,7 +91,7 @@ function App() {
             <Route path="/terms" element={<Terms />} />
             <Route path="/create-post" element={<CreatePost />} />
             <Route path="/post/:id" element={<ViewSinglePost />} />
-            <Route path="/profile/:username/*" element={<Profile/>} />
+            <Route path="/profile/:username/*" element={<Profile />} />
           </Routes>
 
           <Footer />

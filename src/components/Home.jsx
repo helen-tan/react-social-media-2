@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Axios from 'axios';
 import Page from './Page'
 
@@ -34,7 +34,7 @@ const Home = () => {
         authenticate()
     }, [])
 
-    if (loadingAuth) {
+    if(loadingAuth) {
         <div>Loading...</div>
     } else {
         return (
