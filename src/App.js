@@ -1,4 +1,4 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import './App.css';
@@ -26,13 +26,21 @@ function App() {
   // initial value for useReducer state
   const initialState = {
     loggedIn: Boolean(sessionStorage.getItem("token")),
-    flashMessages: []
+    flashMessages: [],
+    user: {
+      token: sessionStorage.getItem("token"),
+      avatar: sessionStorage.getItem("avatar")
+    }
   }
 
   function ourReducer(state, action) {
     switch (action.type) {
       case "login":
-        return { loggedIn: true, flashMessages: state.flashMessages }
+        return { 
+          loggedIn: true, 
+          flashMessages: state.flashMessages,
+          user: action.data
+        }
       case "logout":
         return { loggedIn: false, flashMessages: state.flashMessages }
       case "flashMessage":
@@ -41,6 +49,16 @@ function App() {
   }
   // useReducer
   const [state, dispatch] = useReducer(ourReducer, initialState)
+
+  useEffect(() => {
+    if (state.loggedIn) {
+      sessionStorage.setItem("token", state.user.token)
+      sessionStorage.setItem("avatar", state.user.avatar)
+    } else {
+      sessionStorage.removeItem("token")
+      sessionStorage.removeItem("avatar")
+    }
+  }, [state.loggedIn])
 
   // Global State (useState) - handled by Reducer now
   // const [loggedIn, setLoggedIn] = useState(Boolean(sessionStorage.getItem("token")))

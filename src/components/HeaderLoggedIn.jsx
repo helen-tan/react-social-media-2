@@ -1,16 +1,18 @@
 import React , { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import DispatchContext from '../DispatchContext'
+import StateContext from '../StateContext'
 
 const HeaderLoggedIn = (props) => {
     // Get setLoggedIn method in the parent App.js from the Context
     const globalDispatch = useContext(DispatchContext)
+    const globalState = useContext(StateContext)
 
     const handleLogout = () => {
         globalDispatch({ type: "logout" }) // instead of setLoggedIn(false)
-        // Remove token & avatar from sessionStorage
-        sessionStorage.removeItem("token")
-        sessionStorage.removeItem("avatar")
+        // Remove token & avatar from sessionStorage // Handled by App.js useEffect & Reducer
+        // sessionStorage.removeItem("token")
+        // sessionStorage.removeItem("avatar")
     }
 
     return (
@@ -23,7 +25,7 @@ const HeaderLoggedIn = (props) => {
                 <span className="chat-count-badge text-white"> </span>
             </span>
             <a href="#" className="mr-2">
-                <img className="small-header-avatar" src={sessionStorage.getItem("avatar")} />
+                <img className="small-header-avatar" src={globalState.user.avatar} />
             </a>
             <Link to="/create-post" className="btn btn-sm btn-success mr-2">
                 Create Post

@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import DispatchContext from '../DispatchContext'
+import StateContext from '../StateContext'
 import Axios from 'axios'
 import Page from './Page'
 
@@ -11,6 +12,7 @@ const CreatePost = (props) => {
     const navigate = useNavigate();
     // Get state update logic (previously methods in pure Context) from the Context (combined with Reducer)
     const globalDispatch = useContext(DispatchContext)
+    const globalState = useContext(StateContext)
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -19,7 +21,7 @@ const CreatePost = (props) => {
             const response = await Axios.post("/create-post", {
                 title,
                 body,
-                token: sessionStorage.getItem("token")
+                token: globalState.user.token
             })
             // console.log(response) // post id returned in response.data
             console.log("New post was created!")
