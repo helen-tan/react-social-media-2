@@ -10,18 +10,26 @@ const ViewSinglePost = () => {
     const { id } = useParams()
 
     useEffect(() => {
+        const ourRequest = Axios.CancelToken.source() // A way of identifying an Axios request
+
         async function fetchPost() {
             try {
-                const response = await Axios.get(`/post/${id}`)
+                const response = await Axios.get(`/post/${id}`, {cancelToken: ourRequest.token})
                 // console.log(response.data)
                 setPost(response.data)
                 setLoading(false)
             } catch (err) {
-                console.log("There was a problem.")
+                console.log("There was a problem, or the request was cancelled.")
             }
         }
 
         fetchPost()
+
+        // Cleanup - prevent memory leak (update of state after this component is unmounted/stops being rendered)
+        return () => {
+            // Cancel the Axios request
+            ourRequest.cancel()
+        }
     }, [])
 
     if (loading) {
