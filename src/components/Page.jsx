@@ -6,7 +6,7 @@ const Page = (props) => {
     useEffect(() => {
         document.title = `${props.title} | ComplexApp`
         window.scrollTo(0, 0) // Scroll to the top every this page loads
-    }, [])
+    }, [props.title])
 
     return (
         <Container wide={props.wide}>
