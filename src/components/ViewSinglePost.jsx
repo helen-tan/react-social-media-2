@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import Axios from 'axios'
 import Page from './Page'
 import LoadingDotsIcon from './LoadingDotsIcon'
+import { ReactMarkdown } from 'react-markdown/lib/react-markdown'
 
 const ViewSinglePost = () => {
     const [loading, setLoading] = useState(true)
@@ -14,7 +15,7 @@ const ViewSinglePost = () => {
 
         async function fetchPost() {
             try {
-                const response = await Axios.get(`/post/${id}`, {cancelToken: ourRequest.token})
+                const response = await Axios.get(`/post/${id}`, { cancelToken: ourRequest.token })
                 // console.log(response.data)
                 setPost(response.data)
                 setLoading(false)
@@ -61,7 +62,10 @@ const ViewSinglePost = () => {
             </p>
 
             <div className="body-content">
-                {post.body}
+                <ReactMarkdown
+                    children={post.body}
+                    allowedElements={["p", "br", "strong", "em", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "li"]}
+                />
             </div>
         </Page>
     )
