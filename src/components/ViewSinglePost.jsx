@@ -4,6 +4,8 @@ import Axios from 'axios'
 import Page from './Page'
 import LoadingDotsIcon from './LoadingDotsIcon'
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown'
+import { Tooltip } from 'react-tooltip'
+import 'react-tooltip/dist/react-tooltip.css';
 
 const ViewSinglePost = () => {
     const [loading, setLoading] = useState(true)
@@ -49,8 +51,17 @@ const ViewSinglePost = () => {
             <div className="d-flex justify-content-between">
                 <h2>{post.title}</h2>
                 <span className="pt-2">
-                    <a href="#" className="text-primary mr-2" title="Edit"><i className="fas fa-edit"></i></a>
-                    <a className="delete-post-button text-danger" title="Delete"><i className="fas fa-trash"></i></a>
+                    <a href="#" data-tooltip-id="edit-tooltip" data-tooltip-content="Edit" className="text-primary mr-2">
+                        <i className="fas fa-edit"></i>
+                    </a>
+                    <Tooltip id="edit-tooltip" place="top" className="custom-tooltip"/>
+                    
+                    {" "}
+
+                    <a data-tooltip-id="delete-tooltip" data-tooltip-content="Delete" className="delete-post-button text-danger">
+                        <i className="fas fa-trash"></i>
+                    </a>
+                    <Tooltip id="delete-tooltip" place="top" className="custom-tooltip"/>
                 </span>
             </div>
 
