@@ -6,35 +6,38 @@ const Home = () => {
     const [loggedInUser, setLoggedInUser] = useState("")
     const [loadingAuth, setLoadingAuth] = useState(true)
 
-    const bearer_token = `Bearer ${sessionStorage.getItem('token')}`
-    const config = {
-        headers: {
-            Authorization: bearer_token
-        }
-    }
 
-    // Send request to get identity of logged in user
-    const authenticate = async () => {
-        try {
-            const response = await Axios.get(`http://localhost:8080/authuser`, config)
-            if (response.data) {
-                setLoggedInUser(response.data.loggedInUser)
-                setLoadingAuth(false)
 
-                console.log(response.data)
-            }
-        } catch (err) {
-            console.log("There was a problem")
-            console.log(err)
-            // navigate("/")
-        }
-    }
 
     useEffect(() => {
-        authenticate()
-    }, [])
+        const bearer_token = `Bearer ${sessionStorage.getItem('token')}`
+        const config = {
+            headers: {
+                Authorization: bearer_token
+            }
+        }
 
-    if(loadingAuth) {
+        // Send request to get identity of logged in user
+        const authenticate = async () => {
+            try {
+                const response = await Axios.get(`http://localhost:8080/authuser`, config)
+                if (response.data) {
+                    setLoggedInUser(response.data.loggedInUser)
+                    setLoadingAuth(false)
+
+                    console.log(response.data)
+                }
+            } catch (err) {
+                console.log("There was a problem")
+                console.log(err)
+                // navigate("/")
+            }
+        }
+        
+        authenticate()
+    }, [loggedInUser])
+
+    if (loadingAuth) {
         <div>Loading...</div>
     } else {
         return (
