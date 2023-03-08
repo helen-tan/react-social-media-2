@@ -24,7 +24,8 @@ const EditPost = () => {
         isFetching: true,
         isSaving: false,
         id: useParams().id,
-        sendCount: 0
+        sendCount: 0,
+        notFound: false
     }
 
     function ourReducer(state, action) {
@@ -65,7 +66,7 @@ const EditPost = () => {
                         ...state.sendCount++
                     }
                 } else return { ...state }
-                
+
             case "saveRequestStarted":
                 return {
                     ...state,
@@ -91,22 +92,26 @@ const EditPost = () => {
                         ...state.title.message = ""
                     }
                 }
-                case "bodyRules":
-                    // Validation: Check if body is blank
-                    if (!action.value.trim()) {
-                        return {
-                            ...state,
-                            ...state.body.hasErrors = true,
-                            ...state.body.message = "You must provide body content"
-                        }
-                    } else {
-                        return {
-                            ...state,
-                            ...state.body.hasErrors = false,
-                            ...state.body.message = ""
-                        }
+            case "bodyRules":
+                // Validation: Check if body is blank
+                if (!action.value.trim()) {
+                    return {
+                        ...state,
+                        ...state.body.hasErrors = true,
+                        ...state.body.message = "You must provide body content"
                     }
-
+                } else {
+                    return {
+                        ...state,
+                        ...state.body.hasErrors = false,
+                        ...state.body.message = ""
+                    }
+                }
+            case "notFound":
+                return {
+                    ...state,
+                    ...state.notFound = true
+                }
         }
     }
 
@@ -120,7 +125,14 @@ const EditPost = () => {
             try {
                 const response = await Axios.get(`/post/${state.id}`, { cancelToken: ourRequest.token })
                 // console.log(response.data)
-                dispatch({ type: "fetchComplete", value: response.data })
+                if (response.data) {
+                    // Only declare the req completed if post is found
+                    dispatch({ type: "fetchComplete", value: response.data })
+                } else {
+                    dispatch({ type: "notFound" })
+                }
+
+
             } catch (err) {
                 console.log("There was a problem, or the request was cancelled.")
             }
@@ -177,6 +189,17 @@ const EditPost = () => {
         dispatch({ type: "submitRequest" })
     }
 
+    if (state.notFound) {
+        return (
+            <Page title="Not Found">
+                <div className='text-center'>
+                    <h2>Whoops we cannot find that page</h2>
+                    <p className='lead text-muted'>You can always visit the <Link to="/">homepage</Link> to get a fresh start</p>
+                </div>
+            </Page>
+        )
+    }
+
     if (state.isFetching) {
         return (
             <Page title="...">
@@ -207,10 +230,10 @@ const EditPost = () => {
                     <label htmlFor="post-body" className="text-muted mb-1 d-block">
                         <small>Body Content</small>
                     </label>
-                    <textarea name="body" id="post-body" value={state.body.value} className="body-content tall-textarea form-control" type="text" 
-                        onChange={e => dispatch({ type: "bodyChange", value: e.target.value })} 
+                    <textarea name="body" id="post-body" value={state.body.value} className="body-content tall-textarea form-control" type="text"
+                        onChange={e => dispatch({ type: "bodyChange", value: e.target.value })}
                         onBlur={e => dispatch({ type: "bodyRules", value: e.target.value })} />
-                     {/* Error message */}
+                    {/* Error message */}
                     {state.body.hasErrors && (
                         <div className="alert alert-danger small liveValidateMessage">{state.body.message}</div>
                     )}
