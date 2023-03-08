@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import './App.css';
@@ -14,6 +14,7 @@ import CreatePost from "./components/CreatePost";
 import ViewSinglePost from "./components/ViewSinglePost";
 import FlashMessages from "./components/FlashMessages";
 import Profile from "./components/Profile";
+import EditPost from "./components/EditPost";
 
 // Context
 import StateContext from "./StateContext";
@@ -91,6 +92,7 @@ function App() {
             <Route path="/terms" element={<Terms />} />
             <Route path="/create-post" element={<CreatePost />} />
             <Route path="/post/:id" element={<ViewSinglePost />} />
+            <Route path="/post/:id/edit" element={<EditPost/>} />
             <Route path="/profile/:username/*" element={<Profile />} />
           </Routes>
 

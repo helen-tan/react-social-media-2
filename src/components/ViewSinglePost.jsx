@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import Axios from 'axios'
 import Page from './Page'
 import LoadingDotsIcon from './LoadingDotsIcon'
+import EditPost from './EditPost'
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown'
 import { Tooltip } from 'react-tooltip'
 import 'react-tooltip/dist/react-tooltip.css';
@@ -51,9 +52,9 @@ const ViewSinglePost = () => {
             <div className="d-flex justify-content-between">
                 <h2>{post.title}</h2>
                 <span className="pt-2">
-                    <a href="#" data-tooltip-id="edit-tooltip" data-tooltip-content="Edit" className="text-primary mr-2">
+                    <Link to={`/post/${post._id}/edit`} data-tooltip-id="edit-tooltip" data-tooltip-content="Edit" className="text-primary mr-2">
                         <i className="fas fa-edit"></i>
-                    </a>
+                    </Link>
                     <Tooltip id="edit-tooltip" place="top" className="custom-tooltip"/>
                     
                     {" "}
