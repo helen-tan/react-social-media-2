@@ -4,9 +4,11 @@ import Axios from 'axios'
 import Page from './Page'
 import LoadingDotsIcon from './LoadingDotsIcon'
 import StateContext from '../StateContext'
+import DispatchContext from '../DispatchContext'
 
 const EditPost = () => {
     const globalState = useContext(StateContext)
+    const globalDispatch = useContext(DispatchContext)
 
     const originalState = {
         title: {
@@ -114,6 +116,7 @@ const EditPost = () => {
                     // console.log(response.data)
 
                     dispatch({ type: "saveRequestFinished" })
+                    globalDispatch({ type: "flashMessage", value: "Post was updated" })
                 } catch (err) {
                     console.log("There was a problem, or the request was cancelled.")
                 }
