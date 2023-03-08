@@ -1,10 +1,13 @@
-import React, { useState, useEffect, useReducer } from 'react'
+import React, { useContext, useEffect, useReducer } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import Axios from 'axios'
 import Page from './Page'
 import LoadingDotsIcon from './LoadingDotsIcon'
+import StateContext from '../StateContext'
 
 const EditPost = () => {
+    const globalState = useContext(StateContext)
+
     const originalState = {
         title: {
             value: "",
@@ -51,6 +54,11 @@ const EditPost = () => {
                     ...state,
                     ...state.body.value = action.value
                 }
+            case "submitRequest":
+                return {
+                    ...state,
+                    ...state.sendCount++
+                }
         }
     }
 
@@ -79,6 +87,41 @@ const EditPost = () => {
         }
     }, [])
 
+    // useEffect that runs when post update btn is clicked (detected when sendCount increases)
+    useEffect(() => {
+        if (state.sendCount > 0) {
+            const ourRequest = Axios.CancelToken.source() // A way of identifying an Axios request
+
+            async function fetchPost() {
+                try {
+                    const response = await Axios.post(`/post/${state.id}/edit`, {
+                        title: state.title.value,
+                        body: state.body.value,
+                        token: globalState.user.token
+                    } , { cancelToken: ourRequest.token })
+                    // console.log(response.data)
+                    alert("Post updated!")
+                } catch (err) {
+                    console.log("There was a problem, or the request was cancelled.")
+                }
+            }
+
+            fetchPost()
+
+            // Cleanup - prevent memory leak (update of state after this component is unmounted/stops being rendered)
+            return () => {
+                // Cancel the Axios request
+                ourRequest.cancel()
+            }
+        }
+    }, [state.sendCount])
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+
+        dispatch({ type: "submitRequest" })
+    }
+
     if (state.isFetching) {
         return (
             <Page title="...">
@@ -89,7 +132,7 @@ const EditPost = () => {
 
     return (
         <Page title="Edit Post">
-            <form>
+            <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="post-title" className="text-muted mb-1">
                         <small>Title</small>
