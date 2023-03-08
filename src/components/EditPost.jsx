@@ -59,6 +59,16 @@ const EditPost = () => {
                     ...state,
                     ...state.sendCount++
                 }
+            case "saveRequestStarted":
+                return {
+                    ...state,
+                    ...state.isSaving = true
+                }
+            case "saveRequestFinished":
+                return {
+                    ...state,
+                    ...state.isSaving = false
+                }
         }
     }
 
@@ -90,6 +100,8 @@ const EditPost = () => {
     // useEffect that runs when post update btn is clicked (detected when sendCount increases)
     useEffect(() => {
         if (state.sendCount > 0) {
+            dispatch({ type: "saveRequestStarted" })
+
             const ourRequest = Axios.CancelToken.source() // A way of identifying an Axios request
 
             async function fetchPost() {
@@ -98,9 +110,10 @@ const EditPost = () => {
                         title: state.title.value,
                         body: state.body.value,
                         token: globalState.user.token
-                    } , { cancelToken: ourRequest.token })
+                    }, { cancelToken: ourRequest.token })
                     // console.log(response.data)
-                    alert("Post updated!")
+
+                    dispatch({ type: "saveRequestFinished" })
                 } catch (err) {
                     console.log("There was a problem, or the request was cancelled.")
                 }
@@ -147,7 +160,7 @@ const EditPost = () => {
                     <textarea onChange={e => dispatch({ type: "bodyChange", value: e.target.value })} name="body" id="post-body" value={state.body.value} className="body-content tall-textarea form-control" type="text" />
                 </div>
 
-                <button className="btn btn-primary">Confirm Changes</button>
+                <button className="btn btn-primary" disabled={state.isSaving}>{ state.isSaving ? "Saving..." : "Confirm Changes" }</button>
             </form>
         </Page>
     )
