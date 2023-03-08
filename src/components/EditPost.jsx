@@ -49,18 +49,23 @@ const EditPost = () => {
             case "titleChange":
                 return {
                     ...state,
-                    ...state.title.value = action.value
+                    ...state.title.value = action.value,
+                    ...state.title.hasErrors = false
                 }
             case "bodyChange":
                 return {
                     ...state,
-                    ...state.body.value = action.value
+                    ...state.body.value = action.value,
+                    ...state.body.hasErrors = false
                 }
             case "submitRequest":
-                return {
-                    ...state,
-                    ...state.sendCount++
-                }
+                if (!state.title.hasErrors && !state.body.hasErrors) {
+                    return {
+                        ...state,
+                        ...state.sendCount++
+                    }
+                } else return { ...state }
+                
             case "saveRequestStarted":
                 return {
                     ...state,
@@ -71,6 +76,37 @@ const EditPost = () => {
                     ...state,
                     ...state.isSaving = false
                 }
+            case "titleRules":
+                // Validation: Check if title is blank
+                if (!action.value.trim()) {
+                    return {
+                        ...state,
+                        ...state.title.hasErrors = true,
+                        ...state.title.message = "You must provide a title"
+                    }
+                } else {
+                    return {
+                        ...state,
+                        ...state.title.hasErrors = false,
+                        ...state.title.message = ""
+                    }
+                }
+                case "bodyRules":
+                    // Validation: Check if body is blank
+                    if (!action.value.trim()) {
+                        return {
+                            ...state,
+                            ...state.body.hasErrors = true,
+                            ...state.body.message = "You must provide body content"
+                        }
+                    } else {
+                        return {
+                            ...state,
+                            ...state.body.hasErrors = false,
+                            ...state.body.message = ""
+                        }
+                    }
+
         }
     }
 
@@ -101,7 +137,7 @@ const EditPost = () => {
 
     // useEffect that runs when post update btn is clicked (detected when sendCount increases)
     useEffect(() => {
-        if (state.sendCount > 0) {
+        if (state.sendCount) {
             dispatch({ type: "saveRequestStarted" })
 
             const ourRequest = Axios.CancelToken.source() // A way of identifying an Axios request
@@ -135,6 +171,9 @@ const EditPost = () => {
     const handleSubmit = (e) => {
         e.preventDefault()
 
+        // Validate first before sending the form in a req
+        dispatch({ type: "titleRules", value: state.title.value })
+        dispatch({ type: "bodyRules", value: state.body.value })
         dispatch({ type: "submitRequest" })
     }
 
@@ -153,17 +192,29 @@ const EditPost = () => {
                     <label htmlFor="post-title" className="text-muted mb-1">
                         <small>Title</small>
                     </label>
-                    <input autoFocus onChange={e => dispatch({ type: "titleChange", value: e.target.value })} value={state.title.value} name="title" id="post-title" className="form-control form-control-lg form-control-title" type="text" placeholder="" autoComplete="off" />
+                    <input autoFocus name="title" id="post-title" className="form-control form-control-lg form-control-title" type="text" placeholder="" autoComplete="off"
+                        onChange={e => dispatch({ type: "titleChange", value: e.target.value })} value={state.title.value}
+                        onBlur={e => dispatch({ type: "titleRules", value: e.target.value })} />
+                    {/* Error message */}
+                    {state.title.hasErrors && (
+                        <div className="alert alert-danger small liveValidateMessage">{state.title.message}</div>
+                    )}
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="post-body" className="text-muted mb-1 d-block">
                         <small>Body Content</small>
                     </label>
-                    <textarea onChange={e => dispatch({ type: "bodyChange", value: e.target.value })} name="body" id="post-body" value={state.body.value} className="body-content tall-textarea form-control" type="text" />
+                    <textarea name="body" id="post-body" value={state.body.value} className="body-content tall-textarea form-control" type="text" 
+                        onChange={e => dispatch({ type: "bodyChange", value: e.target.value })} 
+                        onBlur={e => dispatch({ type: "bodyRules", value: e.target.value })} />
+                     {/* Error message */}
+                    {state.body.hasErrors && (
+                        <div className="alert alert-danger small liveValidateMessage">{state.body.message}</div>
+                    )}
                 </div>
 
-                <button className="btn btn-primary" disabled={state.isSaving}>{ state.isSaving ? "Saving..." : "Confirm Changes" }</button>
+                <button className="btn btn-primary" disabled={state.isSaving}>{state.isSaving ? "Saving..." : "Confirm Changes"}</button>
             </form>
         </Page>
     )
