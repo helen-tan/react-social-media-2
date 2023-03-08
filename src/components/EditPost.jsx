@@ -41,9 +41,20 @@ const EditPost = () => {
                     id: state.id,
                     sendCount: 0
                 }
+            case "titleChange":
+                return {
+                    ...state,
+                    ...state.title.value = action.value
+                }
+            case "bodyChange":
+                return {
+                    ...state,
+                    ...state.body.value = action.value
+                }
         }
     }
 
+    // Reducer to manage state
     const [state, dispatch] = useReducer(ourReducer, originalState)
 
     useEffect(() => {
@@ -83,14 +94,14 @@ const EditPost = () => {
                     <label htmlFor="post-title" className="text-muted mb-1">
                         <small>Title</small>
                     </label>
-                    <input autoFocus value={state.title.value} name="title" id="post-title" className="form-control form-control-lg form-control-title" type="text" placeholder="" autoComplete="off" />
+                    <input autoFocus onChange={e => dispatch({ type: "titleChange", value: e.target.value })} value={state.title.value} name="title" id="post-title" className="form-control form-control-lg form-control-title" type="text" placeholder="" autoComplete="off" />
                 </div>
 
                 <div className="form-group">
                     <label htmlFor="post-body" className="text-muted mb-1 d-block">
                         <small>Body Content</small>
                     </label>
-                    <textarea name="body" id="post-body" value={state.body.value} className="body-content tall-textarea form-control" type="text" />
+                    <textarea onChange={e => dispatch({ type: "bodyChange", value: e.target.value })} name="body" id="post-body" value={state.body.value} className="body-content tall-textarea form-control" type="text" />
                 </div>
 
                 <button className="btn btn-primary">Confirm Changes</button>
