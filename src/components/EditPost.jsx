@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useReducer } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import Axios from 'axios'
 import Page from './Page'
 import LoadingDotsIcon from './LoadingDotsIcon'
@@ -8,6 +8,8 @@ import DispatchContext from '../DispatchContext'
 import NotFound from './NotFound'
 
 const EditPost = () => {
+    const navigate = useNavigate()
+
     const globalState = useContext(StateContext)
     const globalDispatch = useContext(DispatchContext)
 
@@ -129,6 +131,13 @@ const EditPost = () => {
                 if (response.data) {
                     // Only declare the req completed if post is found
                     dispatch({ type: "fetchComplete", value: response.data })
+
+                    // Check if current user (username) matches the author of the post
+                    if (globalState.user.username != response.data.author.username) {
+                        globalDispatch({ type: "flashMessage", value: "You do not have permission to edit that post" })
+                        // redirect to homepage
+                        navigate("/home")
+                    }
                 } else {
                     dispatch({ type: "notFound" })
                 }
