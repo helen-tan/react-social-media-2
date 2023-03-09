@@ -1,5 +1,6 @@
 import React, { useEffect, useReducer } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { CSSTransition } from "react-transition-group";
 
 import './App.css';
 
@@ -106,7 +107,11 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
 
-          {state.isSearchOpen ? <Search />: ''}
+          {/* {state.isSearchOpen ? <Search />: ''} */}
+          <CSSTransition timeout={330} in={state.isSearchOpen} classNames="search-overlay" unmountOnExit>
+            <Search />
+          </CSSTransition>
+
           <Footer />
         </BrowserRouter>
 

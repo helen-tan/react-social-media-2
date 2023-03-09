@@ -3,6 +3,7 @@ import Axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
 import DispatchContext from '../DispatchContext'
 import StateContext from '../StateContext'
+import { Tooltip } from 'react-tooltip'
 
 const HeaderLoggedIn = (props) => {
 
@@ -28,9 +29,11 @@ const HeaderLoggedIn = (props) => {
 
     return (
         <div className="flex-row my-3 my-md-0">
-            <a onClick={handleSearchIcon} href="#" className="text-white mr-2 header-search-icon">
+            <a data-tooltip-id="search-tooltip" data-tooltip-content="Search" onClick={handleSearchIcon} href="#" className="text-white mr-2 header-search-icon">
                 <i className="fas fa-search"></i>
             </a>
+            <Tooltip id="search-tooltip" place="bottom" className="custom-tooltip"/>
+
             <span className="mr-2 header-chat-icon text-white">
                 <i className="fas fa-comment"></i>
                 <span className="chat-count-badge text-white"> </span>
