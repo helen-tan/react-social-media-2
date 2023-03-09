@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import Axios from 'axios'
 import Page from './Page'
@@ -7,11 +7,14 @@ import NotFound from './NotFound'
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown'
 import { Tooltip } from 'react-tooltip'
 import 'react-tooltip/dist/react-tooltip.css';
+import StateContext from '../StateContext'
 
 const ViewSinglePost = () => {
     const [loading, setLoading] = useState(true)
     const [post, setPost] = useState()
     const { id } = useParams()
+
+    const globalState= useContext(StateContext)
 
     useEffect(() => {
         const ourRequest = Axios.CancelToken.source() // A way of identifying an Axios request
@@ -36,6 +39,13 @@ const ViewSinglePost = () => {
         }
     }, [])
 
+    const isOwner = () => {
+        // If not logged in = not owner
+        if (globalState.loggedIn) {
+            return globalState.user.username === post.author.username
+        } else return false
+    }
+
     if (!loading && !post) { // if loading is completed & post is undefined (evaluated to false bcos server couldn't find anything)
         return <NotFound />
     }
@@ -55,19 +65,22 @@ const ViewSinglePost = () => {
         <Page title={post.title}>
             <div className="d-flex justify-content-between">
                 <h2>{post.title}</h2>
-                <span className="pt-2">
-                    <Link to={`/post/${post._id}/edit`} data-tooltip-id="edit-tooltip" data-tooltip-content="Edit" className="text-primary mr-2">
-                        <i className="fas fa-edit"></i>
-                    </Link>
-                    <Tooltip id="edit-tooltip" place="top" className="custom-tooltip"/>
-                    
-                    {" "}
 
-                    <a data-tooltip-id="delete-tooltip" data-tooltip-content="Delete" className="delete-post-button text-danger">
-                        <i className="fas fa-trash"></i>
-                    </a>
-                    <Tooltip id="delete-tooltip" place="top" className="custom-tooltip"/>
-                </span>
+                {isOwner() && (
+                    <span className="pt-2">
+                        <Link to={`/post/${post._id}/edit`} data-tooltip-id="edit-tooltip" data-tooltip-content="Edit" className="text-primary mr-2">
+                            <i className="fas fa-edit"></i>
+                        </Link>
+                        <Tooltip id="edit-tooltip" place="top" className="custom-tooltip" />
+
+                        {" "}
+
+                        <a data-tooltip-id="delete-tooltip" data-tooltip-content="Delete" className="delete-post-button text-danger">
+                            <i className="fas fa-trash"></i>
+                        </a>
+                        <Tooltip id="delete-tooltip" place="top" className="custom-tooltip" />
+                    </span>
+                )}
             </div>
 
             <p className="text-muted small mb-4">
