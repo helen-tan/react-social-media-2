@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import Axios from 'axios'
 import Page from './Page'
 import LoadingDotsIcon from './LoadingDotsIcon'
@@ -8,6 +8,7 @@ import { ReactMarkdown } from 'react-markdown/lib/react-markdown'
 import { Tooltip } from 'react-tooltip'
 import 'react-tooltip/dist/react-tooltip.css';
 import StateContext from '../StateContext'
+import DispatchContext from '../DispatchContext'
 
 const ViewSinglePost = () => {
     const [loading, setLoading] = useState(true)
@@ -15,6 +16,9 @@ const ViewSinglePost = () => {
     const { id } = useParams()
 
     const globalState= useContext(StateContext)
+    const globalDispatch = useContext(DispatchContext)
+
+    const navigate = useNavigate()
 
     useEffect(() => {
         const ourRequest = Axios.CancelToken.source() // A way of identifying an Axios request
@@ -46,6 +50,23 @@ const ViewSinglePost = () => {
         } else return false
     }
 
+    const handleDelete = async () => {
+        const areYouSure = window.confirm("Do you really want to delete this post?")
+        if (areYouSure) {
+            try {
+                const response = await Axios.delete(`/post/${id}`, { data: {token: globalState.user.token} })
+                if (response.data === "Success") {
+                    // 1. Display flash message
+                    globalDispatch({ type: "flashMessage", value: "Post as successfully deleted." })
+                    // 2. Redirect back to current user's profile
+                    navigate(`/profile/${globalState.user.username}`)
+                }
+            } catch (err) {
+                console.log("There was a problem")
+            }
+        }
+    }
+
     if (!loading && !post) { // if loading is completed & post is undefined (evaluated to false bcos server couldn't find anything)
         return <NotFound />
     }
@@ -75,7 +96,7 @@ const ViewSinglePost = () => {
 
                         {" "}
 
-                        <a data-tooltip-id="delete-tooltip" data-tooltip-content="Delete" className="delete-post-button text-danger">
+                        <a onClick={handleDelete} data-tooltip-id="delete-tooltip" data-tooltip-content="Delete" className="delete-post-button text-danger">
                             <i className="fas fa-trash"></i>
                         </a>
                         <Tooltip id="delete-tooltip" place="top" className="custom-tooltip" />
