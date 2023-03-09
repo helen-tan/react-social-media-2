@@ -36,7 +36,8 @@ function App() {
       token: sessionStorage.getItem("token"),
       avatar: sessionStorage.getItem("avatar"),
       username: sessionStorage.getItem("username")
-    }
+    },
+    isSearchOpen: false
   }
 
   function ourReducer(state, action) {
@@ -51,6 +52,10 @@ function App() {
         return { loggedIn: false, flashMessages: state.flashMessages }
       case "flashMessage":
         return { loggedIn: state.login, flashMessages: state.flashMessages.concat(action.value) }
+      case "openSearch":
+        return { ...state, ...state.isSearchOpen = true }
+      case "closeSearch":
+        return { ...state, ...state.isSearchOpen = false }
     }
   }
   // useReducer
@@ -94,14 +99,14 @@ function App() {
             <Route path="/terms" element={<Terms />} />
             <Route path="/create-post" element={<CreatePost />} />
             <Route path="/post/:id" element={<ViewSinglePost />} />
-            <Route path="/post/:id/edit" element={<EditPost/>} />
+            <Route path="/post/:id/edit" element={<EditPost />} />
             <Route path="/profile/:username/*" element={<Profile />} />
 
             {/* Catch all */}
-            <Route path="*" element={<NotFound />}/>
+            <Route path="*" element={<NotFound />} />
           </Routes>
 
-          <Search />
+          {state.isSearchOpen ? <Search />: ''}
           <Footer />
         </BrowserRouter>
 
