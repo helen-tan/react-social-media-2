@@ -4,6 +4,21 @@ import DispatchContext from '../DispatchContext'
 const Search = () => {
     const globalDispatch = useContext(DispatchContext)
 
+    useEffect(() =>{
+        // Add keyboard event listener to browser (fn runs when ANY key is pressed)
+        document.addEventListener("keyup", searchKeyPressHandler)
+
+        // Stop listening to the keyboard press when the component is closed
+        return () => {
+            document.removeEventListener("keyup", searchKeyPressHandler)
+        }
+    }, [])
+
+    const searchKeyPressHandler = (e) => {
+        // If the key pressed is the esc key
+        if (e.keyCode === 27) globalDispatch({ type: "closeSearch" })
+    }
+
     return (
         <div className="search-overlay">
             <div className="search-overlay-top shadow-sm">
