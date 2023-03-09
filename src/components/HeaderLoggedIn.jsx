@@ -34,16 +34,29 @@ const HeaderLoggedIn = (props) => {
             </a>
             <Tooltip id="search-tooltip" place="bottom" className="custom-tooltip"/>
 
-            <span className="mr-2 header-chat-icon text-white">
+            {" "}
+
+            <span data-tooltip-id="chat-tooltip" data-tooltip-content="Chat" className="mr-2 header-chat-icon text-white">
                 <i className="fas fa-comment"></i>
                 <span className="chat-count-badge text-white"> </span>
             </span>
-            <Link to={`/profile/${globalState.user.username}`} className="mr-2">
+            <Tooltip id="chat-tooltip" place="bottom" className="custom-tooltip"/>
+
+            {" "}
+
+            <Link data-tooltip-id="profile-tooltip" data-tooltip-content="My Profile" to={`/profile/${globalState.user.username}`} className="mr-2">
                 <img className="small-header-avatar" src={globalState.user.avatar} />
             </Link>
+            <Tooltip id="profile-tooltip" place="bottom" className="custom-tooltip"/>
+
+            {" "}
+
             <Link to="/create-post" className="btn btn-sm btn-success mr-2">
                 Create Post
             </Link>
+
+            {" "}
+            
             <button onClick={handleLogout} className="btn btn-sm btn-secondary">
                 Sign Out
             </button>
