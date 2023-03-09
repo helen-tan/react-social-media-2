@@ -1,8 +1,16 @@
 import React, { useContext, useEffect } from 'react'
 import DispatchContext from '../DispatchContext'
+import { useImmer } from 'use-immer'
 
 const Search = () => {
     const globalDispatch = useContext(DispatchContext)
+
+    const [state, setState] = useImmer({
+        searchTerm: '',
+        results: [],
+        show: 'neither',
+        requestCount: 0
+    })
 
     useEffect(() =>{
         // Add keyboard event listener to browser (fn runs when ANY key is pressed)
@@ -14,9 +22,43 @@ const Search = () => {
         }
     }, [])
 
+    // Send a req to the server only after some time after typing (not on every keystroke to avoid flooding the server)
+    // Watch state.searchTerm for changes
+    useEffect(() => {
+        const delay = setTimeout(() => {
+            //console.log(state.searchTerm)
+            setState(draft => { draft.requestCount++ })
+        }, 3000)
+
+        // Clean up fn not only runs when the component unmounts,
+        // but also the next time when the useEffect runs
+        return () => clearTimeout(delay)
+        // cancels the setTimeout fn above
+
+        // type 1 char > state.earchTerm changes > useEffect runs > setTimeout runs > quickly type another char > state.searchTerm changes > before useEffect runs again, the 1st instance will run its cleanup return fn 
+        // When a person is typing at a reasonable pace, each keystroke will keep clearing the timeout
+        // and setTimeout fn will only run after they stop typing for the ms specified
+    }, [state.searchTerm])
+
+    // Watch state.requestCount for changes
+    useEffect(() => {
+        // so that this won't run when component first renders
+        if (state.requestCount) {
+            // send axios req here
+        }
+    }, [state.requestCount])
+
     const searchKeyPressHandler = (e) => {
         // If the key pressed is the esc key
         if (e.keyCode === 27) globalDispatch({ type: "closeSearch" })
+    }
+
+    // Set the user input in state for every keystroke
+    const handleInput = (e) => {
+        const value = e.target.value
+        setState(draft => {
+            draft.searchTerm = value // with Immer, we have draft which allows us to directly mutate state
+        })
     }
 
     return (
@@ -26,7 +68,8 @@ const Search = () => {
                     <label htmlFor="live-search-field" className="search-overlay-icon">
                         <i className="fas fa-search"></i>
                     </label>
-                    <input autoFocus type="text" autoComplete="off" id="live-search-field" className="live-search-field" placeholder="What are you interested in?" />
+                    {/* Search input */}
+                    <input onChange={handleInput} autoFocus type="text" autoComplete="off" id="live-search-field" className="live-search-field" placeholder="What are you interested in?" />
                     <span onClick={() => globalDispatch({ type: "closeSearch" })} className="close-live-search">
                         <i className="fas fa-times-circle"></i>
                     </span>
