@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import Axios from 'axios'
 import Page from './Page'
 import LoadingDotsIcon from './LoadingDotsIcon'
-import EditPost from './EditPost'
+import NotFound from './NotFound'
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown'
 import { Tooltip } from 'react-tooltip'
 import 'react-tooltip/dist/react-tooltip.css';
@@ -35,6 +35,10 @@ const ViewSinglePost = () => {
             ourRequest.cancel()
         }
     }, [])
+
+    if (!loading && !post) { // if loading is completed & post is undefined (evaluated to false bcos server couldn't find anything)
+        return <NotFound />
+    }
 
     if (loading) {
         return (
