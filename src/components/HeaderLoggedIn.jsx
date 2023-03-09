@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import Axios from 'axios'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import DispatchContext from '../DispatchContext'
 import StateContext from '../StateContext'
 
@@ -10,11 +10,15 @@ const HeaderLoggedIn = (props) => {
     const globalDispatch = useContext(DispatchContext)
     const globalState = useContext(StateContext)
 
+    const navigate = useNavigate()
+
     const handleLogout = () => {
         globalDispatch({ type: "logout" }) // instead of setLoggedIn(false)
         // Remove token & avatar from sessionStorage // Handled by App.js useEffect & Reducer
         // sessionStorage.removeItem("token")
         // sessionStorage.removeItem("avatar")
+
+        navigate("/home")
     }
 
     return (
