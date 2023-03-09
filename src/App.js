@@ -16,6 +16,7 @@ import FlashMessages from "./components/FlashMessages";
 import Profile from "./components/Profile";
 import EditPost from "./components/EditPost";
 import NotFound from "./components/NotFound";
+import Search from "./components/Search";
 
 // Context
 import StateContext from "./StateContext";
@@ -100,6 +101,7 @@ function App() {
             <Route path="*" element={<NotFound />}/>
           </Routes>
 
+          <Search />
           <Footer />
         </BrowserRouter>
 
