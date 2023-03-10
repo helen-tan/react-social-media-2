@@ -35,7 +35,7 @@ const Search = () => {
             const delay = setTimeout(() => {
                 //console.log(state.searchTerm)
                 setState(draft => { draft.requestCount++ })
-            }, 3000)
+            }, 750)
 
             // Clean up fn not only runs when the component unmounts,
             // but also the next time when the useEffect runs
