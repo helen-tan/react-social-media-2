@@ -24,6 +24,8 @@ const Profile = () => {
     })
 
     useEffect(() => {
+        const ourRequest = Axios.CancelToken.source()
+
         // Fetch data related to the profile (specified by username)
         async function fetchData() {
             try {
@@ -39,17 +41,61 @@ const Profile = () => {
         }
 
         fetchData()
+
+        return () => {
+            ourRequest.cancel()
+        }
     }, [])
+
+    // useEffect to watch for changes in the state startFollowingRequestCount
+    useEffect(() => {
+        // if > 0 (prevent req from firing on component first mount)
+        if (state.startFollowingRequestCount) {
+            setState(draft => {
+                draft.followActionLoading = true
+            }) // this disables the follow btn as the req is sending
+
+            const ourRequest = Axios.CancelToken.source()
+
+            // Fetch data related to the profile (specified by username)
+            async function fetchData() {
+                try {
+                    const response = await Axios.post(`/addFollow/${state.profileData.profileUsername}`, { token: globalState.user.token })
+                    // console.log(response.data)
+
+                    setState(draft => {
+                        draft.profileData.isFollowing = true
+                        draft.profileData.counts.followerCount++
+                        draft.followActionLoading = false
+                    })
+                } catch (err) {
+                    console.log("There was a problem.")
+                }
+            }
+
+            fetchData()
+
+            return () => {
+                ourRequest.cancel()
+            }
+        }
+    }, [state.startFollowingRequestCount])
+
+    const startFollowing = () => {
+        setState(draft => {
+            draft.startFollowingRequestCount++
+        })
+    }
 
     return (
         <Page title="Profile Screen">
             <h2>
-                <img className="avatar-small" src={state.profileData.profileAvatar} /> {state.profileData.profileUsername}
+                <img className="avatar-small" src={state.profileData.profileAvatar} alt="profile"/> {state.profileData.profileUsername}
                 {/* Show follow btn only if logged in, not following the person & not your own profile & when component is still loading with placeholder ... value */}
-                {globalState.loggedIn 
-                    && !state.profileData.isFollowing 
-                    && globalState.user.username != state.profileData.profileUsername  
-                    && state.profileData.profileUsername != '...'
+                {globalState.loggedIn
+                    && !state.profileData.isFollowing
+                    && globalState.user.username !== state.profileData.profileUsername
+                    && state.profileData.profileUsername !== '...'
                     && (
                         <button onClick={startFollowing} disabled={state.followActionLoading} className="btn btn-primary btn-sm ml-2">Follow <i className="fas fa-user-plus"></i></button>
                     )}
