@@ -22,7 +22,7 @@ const ProfilePosts = () => {
         }
 
         fetchPosts()
-    }, [])
+    }, [username])
 
     if (loading) {
         return <LoadingDotsIcon />

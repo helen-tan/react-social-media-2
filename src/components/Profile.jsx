@@ -45,7 +45,7 @@ const Profile = () => {
         return () => {
             ourRequest.cancel()
         }
-    }, [])
+    }, [username])
 
     // useEffect to watch for changes in the state startFollowingRequestCount
     useEffect(() => {
