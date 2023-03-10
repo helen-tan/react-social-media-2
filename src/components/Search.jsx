@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react'
+import Axios  from 'axios'
 import DispatchContext from '../DispatchContext'
 import { useImmer } from 'use-immer'
 
@@ -44,7 +45,22 @@ const Search = () => {
     useEffect(() => {
         // so that this won't run when component first renders
         if (state.requestCount) {
-            // send axios req here
+            const ourRequest = Axios.CancelToken.source() // create cancel token to cancel req if component unmounts in the middle of the req
+            
+            async function fetchResults() {
+                try {
+                    const response = await Axios.post('/search', { searchTerm: state.searchTerm }, { cancelToken: ourRequest.token })
+                    // console.log(response.data)
+                    setState(draft => {
+                        draft.results = response.data
+                    })
+                } catch (err) {
+                    console.log("There was a problem or the request was cancelled.")
+                }
+            }
+            fetchResults()
+
+            return () => ourRequest.cancel()
         }
     }, [state.requestCount])
 
