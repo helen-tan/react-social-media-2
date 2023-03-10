@@ -45,7 +45,14 @@ const Profile = () => {
         <Page title="Profile Screen">
             <h2>
                 <img className="avatar-small" src={state.profileData.profileAvatar} /> {state.profileData.profileUsername}
-                <button className="btn btn-primary btn-sm ml-2">Follow <i className="fas fa-user-plus"></i></button>
+                {/* Show follow btn only if logged in, not following the person & not your own profile & when component is still loading with placeholder ... value */}
+                {globalState.loggedIn 
+                    && !state.profileData.isFollowing 
+                    && globalState.user.username != state.profileData.profileUsername  
+                    && state.profileData.profileUsername != '...'
+                    && (
+                        <button className="btn btn-primary btn-sm ml-2">Follow <i className="fas fa-user-plus"></i></button>
+                    )}
             </h2>
 
             <div className="profile-nav nav nav-tabs pt-2 mb-4">
