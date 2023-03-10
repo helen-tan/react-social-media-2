@@ -41,7 +41,7 @@ const ViewSinglePost = () => {
             // Cancel the Axios request
             ourRequest.cancel()
         }
-    }, [])
+    }, [id])
 
     const isOwner = () => {
         // If not logged in = not owner
