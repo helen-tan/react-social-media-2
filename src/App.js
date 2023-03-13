@@ -39,7 +39,8 @@ function App() {
       avatar: sessionStorage.getItem("avatar"),
       username: sessionStorage.getItem("username")
     },
-    isSearchOpen: false
+    isSearchOpen: false,
+    isChatOpen: false
   }
 
   function ourReducer(state, action) {
@@ -58,6 +59,10 @@ function App() {
         return { ...state, ...state.isSearchOpen = true }
       case "closeSearch":
         return { ...state, ...state.isSearchOpen = false }
+      case "toggleChat":
+        return { ...state, ...state.isChatOpen = !state.isChatOpen }
+      case "closeChat":
+        return { ...state, ...state.isChatOpen = false }
     }
   }
   // useReducer

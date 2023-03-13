@@ -1,12 +1,17 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import StateContext from '../StateContext'
+import DispatchContext from '../DispatchContext'
 
 const Chat = () => {
+    const globalState = useContext(StateContext)
+    const globalDispatch = useContext(DispatchContext)
+
     return (
-        <div id="chat-wrapper" className="chat-wrapper chat-wrapper--is-visible shadow border-top border-left border-right">
+        <div id="chat-wrapper" className={"chat-wrapper shadow border-top border-left border-right " + (globalState.isChatOpen ? "chat-wrapper--is-visible" : "")}>
             {/* Chat Title bar */}
             <div className="chat-title-bar bg-primary">
                 Chat
-                <span className="chat-title-bar-close">
+                <span onClick={() => globalDispatch({ type: "closeChat" })} className="chat-title-bar-close">
                     <i className="fas fa-times-circle"></i>
                 </span>
             </div>

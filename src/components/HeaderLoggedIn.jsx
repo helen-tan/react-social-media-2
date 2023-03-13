@@ -36,7 +36,7 @@ const HeaderLoggedIn = (props) => {
 
             {" "}
 
-            <span data-tooltip-id="chat-tooltip" data-tooltip-content="Chat" className="mr-2 header-chat-icon text-white">
+            <span onClick={() => globalDispatch({ type: "toggleChat" })} data-tooltip-id="chat-tooltip" data-tooltip-content="Chat" className="mr-2 header-chat-icon text-white">
                 <i className="fas fa-comment"></i>
                 <span className="chat-count-badge text-white"> </span>
             </span>
