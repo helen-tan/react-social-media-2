@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef } from 'react'
 import StateContext from '../StateContext'
 import DispatchContext from '../DispatchContext'
+import { useImmer } from 'use-immer'
 
 const Chat = () => {
     const globalState = useContext(StateContext)
@@ -11,11 +12,31 @@ const Chat = () => {
     // Unlike state, we can directly mutate it
     // React will not re-render when our reference changes
 
+    const [state, setState] = useImmer({
+        fieldValue: ''
+    })
+
     useEffect(() => {
         if (globalState.isChatOpen) {
             chatField.current.focus()
         }
     }, [globalState.isChatOpen])
+
+    const handleFieldChange = (e) => {
+        const value = e.target.value
+
+        setState(draft => {
+            draft.fieldValue = value
+        })
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        alert(state.fieldValue)
+        setState(draft => {
+            draft.fieldValue= ''
+        })
+    }
 
     return (
         <div id="chat-wrapper" className={"chat-wrapper shadow border-top border-left border-right " + (globalState.isChatOpen ? "chat-wrapper--is-visible" : "")}>
@@ -51,8 +72,8 @@ const Chat = () => {
             </div>
 
             {/* User input */}
-            <form id="chatForm" className="chat-form border-top">
-                <input ref={chatField} type="text" className="chat-field" id="chatField" placeholder="Type a message…" autoComplete="off" />
+            <form onSubmit={handleSubmit} id="chatForm" className="chat-form border-top">
+                <input value={state.fieldValue} onChange={handleFieldChange} ref={chatField} type="text" className="chat-field" id="chatField" placeholder="Type a message…" autoComplete="off" />
             </form>
         </div>
     )
