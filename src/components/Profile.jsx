@@ -168,7 +168,7 @@ const Profile = () => {
             <Routes>
                 <Route path="" element={<ProfilePosts />} />
                 <Route path="followers" element={<ProfileFollowers />} />
-                <Route path="following" element={<ProfileFollowing />} />
+                <Route path="following" element={<ProfileFollowing profileUsername={state.profileData.profileUsername} />} />
             </Routes>
 
         </Page>
