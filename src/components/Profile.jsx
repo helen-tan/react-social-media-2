@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from 'react'
 import { useImmer } from 'use-immer'
-import { useParams } from "react-router-dom"
+import { useParams, NavLink } from "react-router-dom"
 import Axios from 'axios'
 import StateContext from '../StateContext'
 import Page from './Page'
@@ -150,15 +150,15 @@ const Profile = () => {
             </h2>
 
             <div className="profile-nav nav nav-tabs pt-2 mb-4">
-                <a href="#" className="active nav-item nav-link">
+                <NavLink to="" end className="nav-item nav-link">
                     Posts: {state.profileData.counts.postCounts}
-                </a>
-                <a href="#" className="nav-item nav-link">
+                </NavLink>
+                <NavLink to="followers" className="nav-item nav-link">
                     Followers: {state.profileData.counts.followerCount}
-                </a>
-                <a href="#" className="nav-item nav-link">
+                </NavLink>
+                <NavLink to="following" className="nav-item nav-link">
                     Following: {state.profileData.counts.followingCount}
-                </a>
+                </NavLink>
             </div>
 
             <ProfilePosts />
