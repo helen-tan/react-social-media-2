@@ -18,6 +18,7 @@ import Profile from "./components/Profile";
 import EditPost from "./components/EditPost";
 import NotFound from "./components/NotFound";
 import Search from "./components/Search";
+import Chat from "./components/Chat";
 
 // Context
 import StateContext from "./StateContext";
@@ -111,6 +112,8 @@ function App() {
           <CSSTransition timeout={330} in={state.isSearchOpen} classNames="search-overlay" unmountOnExit>
             <Search />
           </CSSTransition>
+
+          <Chat />
 
           <Footer />
         </BrowserRouter>
