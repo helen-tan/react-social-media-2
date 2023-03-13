@@ -37,7 +37,7 @@ const ProfileFollowers = (props) => {
                 posts.map((follower, index) => {
                     return (
                         <Link key={index} to={`/profile/${follower.username}`} className="list-group-item list-group-item-action">
-                            <img className="avatar-tiny" src={follower.avatar} /> {follower.username}
+                            <img className="avatar-tiny" src={follower.avatar} alt="profile image"/> {follower.username}
                         </Link>
                     )
                 })

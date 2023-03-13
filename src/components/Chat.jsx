@@ -85,7 +85,7 @@ const Chat = () => {
                                 <div className="chat-message">
                                     <div className="chat-message-inner">{message.message}</div>
                                 </div>
-                                <img className="chat-avatar avatar-tiny" src={message.avatar} />
+                                <img className="chat-avatar avatar-tiny" src={message.avatar} alt="profile avatar"/>
                             </div>
                         )
                     } else {

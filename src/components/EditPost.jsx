@@ -133,7 +133,7 @@ const EditPost = () => {
                     dispatch({ type: "fetchComplete", value: response.data })
 
                     // Check if current user (username) matches the author of the post
-                    if (globalState.user.username != response.data.author.username) {
+                    if (globalState.user.username !== response.data.author.username) {
                         globalDispatch({ type: "flashMessage", value: "You do not have permission to edit that post" })
                         // redirect to homepage
                         navigate("/home")

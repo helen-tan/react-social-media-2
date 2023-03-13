@@ -1,5 +1,4 @@
 import React, { useContext, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import Axios from 'axios'
 import Post from './Post'
 import DispatchContext from '../DispatchContext'
@@ -110,7 +109,7 @@ const Search = () => {
                     {/* Loading Spinner */}
                     <div className={"circle-loader " + (state.show === "loading" ? "circle-loader--visible" : "")}></div>
                     {/* Search Results */}
-                    <div className={"live-search-results " + (state.show == "results" ? "live-search-results--visible" : "")}>
+                    <div className={"live-search-results " + (state.show === "results" ? "live-search-results--visible" : "")}>
                         {/* If search results != 0. Use Boolean so number 0 will not show*/}
                         {Boolean(state.results.length) && (
                             <div className="list-group shadow-sm">
