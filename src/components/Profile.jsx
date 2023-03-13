@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from 'react'
 import { useImmer } from 'use-immer'
-import { useParams, NavLink } from "react-router-dom"
+import { useParams, NavLink, Routes, Route } from "react-router-dom"
 import Axios from 'axios'
 import StateContext from '../StateContext'
 import Page from './Page'
@@ -148,7 +148,8 @@ const Profile = () => {
                         <button onClick={stopFollowing} disabled={state.followActionLoading} className="btn btn-danger btn-sm ml-2">Unfollow <i className="fas fa-user-times"></i></button>
                     )}
             </h2>
-
+            
+            {/* NavLinks creates a useful & shareable URL + active navtab styling */}
             <div className="profile-nav nav nav-tabs pt-2 mb-4">
                 <NavLink to="" end className="nav-item nav-link">
                     Posts: {state.profileData.counts.postCounts}
@@ -160,8 +161,13 @@ const Profile = () => {
                     Following: {state.profileData.counts.followingCount}
                 </NavLink>
             </div>
-
-            <ProfilePosts />
+            
+            {/* Routes will decide what is rendered to the screen when we visit those paths NavLink take us to */}
+            <Routes>
+                <Route path="" element={<ProfilePosts />} />
+                <Route path="followers" element={<ProfilePosts />} />
+                <Route path="following" element={<ProfilePosts />} />
+            </Routes>
 
         </Page>
     )
