@@ -2,6 +2,9 @@ import React, { useContext, useEffect, useRef } from 'react'
 import StateContext from '../StateContext'
 import DispatchContext from '../DispatchContext'
 import { useImmer } from 'use-immer'
+import { io } from 'socket.io-client'
+// Establish an ongoing bidirectional connection between the browser and the backend server
+const socket = io("http://localhost:8080")
 
 const Chat = () => {
     const globalState = useContext(StateContext)
@@ -23,6 +26,17 @@ const Chat = () => {
         }
     }, [globalState.isChatOpen])
 
+    // Run the 1st time component renders - Frontend to begin listening for an event called "chatFromServer"
+    useEffect(() => {
+        // Arg 1: Name of event the server will emit to use (programmed in backend)
+        // Arg 2: Function that will run whenever the specified event in Arg 1 happens
+        socket.on("chatFromServer", message => {
+            setState(draft => {
+                draft.chatMessages.push(message)
+            })
+        })
+    }, [])
+
     const handleFieldChange = (e) => {
         const value = e.target.value
 
@@ -33,7 +47,12 @@ const Chat = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        // Send message to chat server
+        // Send message to chat server - Server will broadcast to connected users
+        // Server will listen to an event "chatFromBrowser"
+        socket.emit("chatFromBrowser", {
+            message: state.fieldValue,
+            token: globalState.user.token
+        })
 
         setState(draft => {
             // Add message to state collection of messages
@@ -62,30 +81,32 @@ const Chat = () => {
                     // If entered by the logged in user
                     if (message.username === globalState.user.username) {
                         return (
-                            <div className="chat-self">
+                            <div className="chat-self" key={index}>
                                 <div className="chat-message">
                                     <div className="chat-message-inner">{message.message}</div>
                                 </div>
                                 <img className="chat-avatar avatar-tiny" src={message.avatar} />
                             </div>
                         )
-                    }
-                    // If not entered by the logged in user
-                    return (
-                        <div className="chat-other">
-                            <a href="#">
-                                <img className="avatar-tiny" src="https://gravatar.com/avatar/b9216295c1e3931655bae6574ac0e4c2?s=128" />
-                            </a>
-                            <div className="chat-message">
-                                <div className="chat-message-inner">
-                                    <a href="#">
-                                        <strong>barksalot:</strong>
-                                    </a>
-                                    Hey, I am good, how about you?
+                    } else {
+                        // If not entered by the logged in user
+                        return (
+                            <div className="chat-other" key={index}>
+                                <a href="#">
+                                    <img className="avatar-tiny" src={message.avatar} />
+                                </a>
+                                <div className="chat-message">
+                                    <div className="chat-message-inner">
+                                        <a href="#">
+                                            <strong>{message.username}: </strong>
+                                        </a>
+                                        {message.message}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )
+                        )
+
+                    }
                 })}
             </div>
 
