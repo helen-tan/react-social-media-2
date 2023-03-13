@@ -1,15 +1,13 @@
 import React, { useEffect, useContext } from 'react'
-import { Link } from 'react-router-dom';
 import Axios from 'axios';
 import Page from './Page'
+import Post from './Post';
 import LoadingDotsIcon from './LoadingDotsIcon';
 import StateContext from '../StateContext';
-import DispatchContext from '../DispatchContext';
 import { useImmer } from 'use-immer';
 
 const Home = () => {
     const globalState = useContext(StateContext)
-    const globalDispatch = useContext(DispatchContext)
 
     const [state, setState] = useImmer({
         isLoading: true,
@@ -52,14 +50,7 @@ const Home = () => {
                     <h2 className='text-center mb-4'>The Latest from Those You Follow</h2>
                     <div className='list-group'>
                         {state.feed.map(post => {
-                            const date = new Date(post.createdDate)
-                            const dateFormatted = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
-                            return (
-                                <Link onClick={() => globalDispatch({ type: "closeSearch" })} key={post._id} to={`/post/${post._id}`} className="list-group-item list-group-item-action">
-                                    <img className="avatar-tiny" src={post.author.avatar} /> <strong>{post.title}</strong> {" "}
-                                    <span className="text-muted small">by {post.author.username} {dateFormatted} </span>
-                                </Link>
-                            )
+                            return <Post post={post} key={post._id}/>
                         })}
                     </div>
                 </>
