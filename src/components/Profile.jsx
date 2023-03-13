@@ -6,6 +6,7 @@ import StateContext from '../StateContext'
 import Page from './Page'
 import ProfilePosts from './ProfilePosts'
 import ProfileFollowers from './ProfileFollowers'
+import ProfileFollowing from './ProfileFollowing'
 
 const Profile = () => {
     const { username } = useParams() // Get the username segment of the url
@@ -167,7 +168,7 @@ const Profile = () => {
             <Routes>
                 <Route path="" element={<ProfilePosts />} />
                 <Route path="followers" element={<ProfileFollowers />} />
-                <Route path="following" element={<ProfilePosts />} />
+                <Route path="following" element={<ProfileFollowing />} />
             </Routes>
 
         </Page>
