@@ -5,6 +5,7 @@ import Axios from 'axios'
 import StateContext from '../StateContext'
 import Page from './Page'
 import ProfilePosts from './ProfilePosts'
+import ProfileFollowers from './ProfileFollowers'
 
 const Profile = () => {
     const { username } = useParams() // Get the username segment of the url
@@ -165,7 +166,7 @@ const Profile = () => {
             {/* Routes will decide what is rendered to the screen when we visit those paths NavLink take us to */}
             <Routes>
                 <Route path="" element={<ProfilePosts />} />
-                <Route path="followers" element={<ProfilePosts />} />
+                <Route path="followers" element={<ProfileFollowers />} />
                 <Route path="following" element={<ProfilePosts />} />
             </Routes>
 
