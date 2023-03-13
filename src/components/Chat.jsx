@@ -1,10 +1,21 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import StateContext from '../StateContext'
 import DispatchContext from '../DispatchContext'
 
 const Chat = () => {
     const globalState = useContext(StateContext)
     const globalDispatch = useContext(DispatchContext)
+
+    const chatField = useRef(null) 
+    // not document.querySelector. A Ref is like a box to hold a value. 
+    // Unlike state, we can directly mutate it
+    // React will not re-render when our reference changes
+
+    useEffect(() => {
+        if (globalState.isChatOpen) {
+            chatField.current.focus()
+        }
+    }, [globalState.isChatOpen])
 
     return (
         <div id="chat-wrapper" className={"chat-wrapper shadow border-top border-left border-right " + (globalState.isChatOpen ? "chat-wrapper--is-visible" : "")}>
@@ -41,7 +52,7 @@ const Chat = () => {
 
             {/* User input */}
             <form id="chatForm" className="chat-form border-top">
-                <input type="text" className="chat-field" id="chatField" placeholder="Type a message…" autoComplete="off" />
+                <input ref={chatField} type="text" className="chat-field" id="chatField" placeholder="Type a message…" autoComplete="off" />
             </form>
         </div>
     )
