@@ -167,7 +167,7 @@ const Profile = () => {
             {/* Routes will decide what is rendered to the screen when we visit those paths NavLink take us to */}
             <Routes>
                 <Route path="" element={<ProfilePosts />} />
-                <Route path="followers" element={<ProfileFollowers />} />
+                <Route path="followers" element={<ProfileFollowers profileUsername={state.profileData.profileUsername} />} />
                 <Route path="following" element={<ProfileFollowing profileUsername={state.profileData.profileUsername} />} />
             </Routes>
 

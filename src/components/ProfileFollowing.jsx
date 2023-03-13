@@ -42,7 +42,7 @@ const ProfileFollowing = (props) => {
                     )
                 })
                 :
-                globalState.user.username === props.profileUsername ? <div>You have no followers yet</div> : <div>{props.profileUsername} has no followers yet.</div>
+                globalState.user.username === props.profileUsername ? <div>You are not following anyone yet.</div> : <div>{props.profileUsername} is not following anyone yet.</div>
             }
 
         </div>

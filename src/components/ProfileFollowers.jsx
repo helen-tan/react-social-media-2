@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import Axios from 'axios'
 import LoadingDotsIcon from './LoadingDotsIcon'
+import StateContext from '../StateContext'
 
-const ProfileFollowers = () => {
+const ProfileFollowers = (props) => {
     const [loading, setLoading] = useState(true)
     const [posts, setPosts] = useState([])
 
     const { username } = useParams()
+
+    const globalState = useContext(StateContext)
 
     useEffect(() => {
         async function fetchPosts() {
@@ -30,13 +33,17 @@ const ProfileFollowers = () => {
 
     return (
         <div className="list-group">
-            {posts.map((follower, index) => {
-                return (
-                    <Link key={index} to={`/profile/${follower.username}`} className="list-group-item list-group-item-action">
-                        <img className="avatar-tiny" src={follower.avatar} /> {follower.username}
-                    </Link>
-                )
-            })}
+            {posts.length ?
+                posts.map((follower, index) => {
+                    return (
+                        <Link key={index} to={`/profile/${follower.username}`} className="list-group-item list-group-item-action">
+                            <img className="avatar-tiny" src={follower.avatar} /> {follower.username}
+                        </Link>
+                    )
+                })
+            :
+            globalState.user.username === props.profileUsername ? <div>You have no followers yet.</div> : <div>{props.profileUsername} has no followers yet.</div>}
+
         </div>
     )
 }
