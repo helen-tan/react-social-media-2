@@ -19,15 +19,10 @@ const Chat = () => {
         fieldValue: '',
         chatMessages: []
     })
-
-    useEffect(() => {
-        if (globalState.isChatOpen) {
-            chatField.current.focus()
-        }
-    }, [globalState.isChatOpen])
-
+    
     // Run the 1st time component renders - Frontend to begin listening for an event called "chatFromServer"
     useEffect(() => {
+        socket.removeAllListeners()
         // Arg 1: Name of event the server will emit to use (programmed in backend)
         // Arg 2: Function that will run whenever the specified event in Arg 1 happens
         socket.on("chatFromServer", message => {
@@ -36,6 +31,13 @@ const Chat = () => {
             })
         })
     }, [])
+
+    useEffect(() => {
+        if (globalState.isChatOpen) {
+            chatField.current.focus()
+        }
+    }, [globalState.isChatOpen])
+
 
     const handleFieldChange = (e) => {
         const value = e.target.value
