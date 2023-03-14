@@ -32,14 +32,14 @@ const HomeGuest = () => {
         switch (action.type) {
             case "usernameImmediately":
                 // Set state in an object first
-                let newObj = {
+                let obj1 = {
                     ...state,
                     ...state.username.value = action.value,
                     ...state.username.hasErrors = false
                 }
                 // Username cannot be > 30 characters
                 if (state.username.value.length > 30) {
-                    newObj = {
+                    obj1 = {
                         ...state,
                         ...state.username.hasErrors = true,
                         ...state.username.message = "Username cannot exeed 30 characters"
@@ -47,26 +47,49 @@ const HomeGuest = () => {
                 }
                 // Username must be alphanumeric (letters and numbers)
                 if (state.username.value && !/^([a-zA-Z0-9]+)$/.test(state.username.value)) { // Check not empty &
-                    newObj = {
+                    obj1 = {
                         ...state,
                         ...state.username.hasErrors = true,
                         ...state.username.message = "Username cannot only contain letters and numbers"
                     }
                 }
-                return newObj;
+                return obj1;
             case "usernameAfterDelay":
-                let obj = {}
+                let obj2 = {}
                 // Username cannot be less than 3 chars
                 if (state.username.value.length < 3) {
-                    obj = {
+                    obj2 = {
                         ...state,
                         ...state.username.hasErrors = true,
                         ...state.username.message = "Username must be at least 3 characters"
                     }
                 }
-                return obj
+                // Username must not already exist
+                // If no above errors and is valid username - increment checkCount, and begin checking if username already exist (handled by "usernameUniqueResults")
+                if (!state.hasErrors) {
+                    obj2 = {
+                        ...state,
+                        ...state.username.checkCount++
+                    }
+                }
+                return obj2
             case "usernameUniqueResults":
-                return
+                let obj3 = {}
+                // if action.value is true (returns by server) - means username is already in use
+                if (action.value) {
+                    obj3 = {
+                        ...state,
+                        ...state.username.hasErrors = true,
+                        ...state.username.isUnique = false,
+                        ...state.username.message = "That username is already taken"
+                    }
+                } else {
+                    obj3 = {
+                        ...state,
+                        ...state.username.isUnique = true,
+                    }
+                }
+                return obj3
             case "emailImmediately":
                 return {
                     ...state,
@@ -99,6 +122,26 @@ const HomeGuest = () => {
             return () => clearTimeout(delay)
         }
     }, [state.username.value])
+
+    // Watch state.username.checkCount for changes - 
+    useEffect(() => {
+        // so that this won't run when component first renders
+        if (state.username.checkCount) {
+            const ourRequest = Axios.CancelToken.source() // create cancel token to cancel req if component unmounts in the middle of the req
+
+            async function fetchResults() {
+                try {
+                    const response = await Axios.post('/doesUsernameExist', { username: state.username.value }, { cancelToken: ourRequest.token })
+                    dispatch({ type: "usernameUniqueResults", value: response.data})
+                } catch (err) {
+                    console.log("There was a problem or the request was cancelled.")
+                }
+            }
+            fetchResults()
+
+            return () => ourRequest.cancel()
+        }
+    }, [state.username.checkCount])
 
     const handleSubmit = (e) => {
         e.preventDefault();
