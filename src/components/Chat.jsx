@@ -3,6 +3,7 @@ import StateContext from '../StateContext'
 import DispatchContext from '../DispatchContext'
 import { useImmer } from 'use-immer'
 import { io } from 'socket.io-client'
+import { Link } from 'react-router-dom'
 // Establish an ongoing bidirectional connection between the browser and the backend server
 const socket = io("http://localhost:8080")
 
@@ -19,7 +20,7 @@ const Chat = () => {
         fieldValue: '',
         chatMessages: []
     })
-    
+
     // Run the 1st time component renders - Frontend to begin listening for an event called "chatFromServer"
     useEffect(() => {
         socket.removeAllListeners()
@@ -94,20 +95,19 @@ const Chat = () => {
                         // If not entered by the logged in user
                         return (
                             <div className="chat-other" key={index}>
-                                <a href="#">
+                                <Link to={`/profile/${message.username}`}>
                                     <img className="avatar-tiny" src={message.avatar} />
-                                </a>
+                                </Link>
                                 <div className="chat-message">
                                     <div className="chat-message-inner">
-                                        <a href="#">
+                                        <Link to={`/profile/${message.username}`}>
                                             <strong>{message.username}: </strong>
-                                        </a>
+                                        </Link>
                                         {message.message}
                                     </div>
                                 </div>
                             </div>
                         )
-
                     }
                 })}
             </div>
