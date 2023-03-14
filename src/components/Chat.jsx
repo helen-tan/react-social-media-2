@@ -12,6 +12,7 @@ const Chat = () => {
     const globalDispatch = useContext(DispatchContext)
 
     const chatField = useRef(null)
+    const chatLog = useRef(null) // For chat scrollbar to auto scroll down
     // not document.querySelector. A Ref is like a box to hold a value. 
     // Unlike state, we can directly mutate it
     // React will not re-render when our reference changes
@@ -38,6 +39,11 @@ const Chat = () => {
             chatField.current.focus()
         }
     }, [globalState.isChatOpen])
+
+    // Whenever a new message is pushed into the collection, scroll the chatlog div down to the bottom
+    useEffect(() => {
+        chatLog.current.scrollTop = chatLog.current.scrollHeight
+    }, [state.chatMessages])
 
 
     const handleFieldChange = (e) => {
@@ -79,7 +85,7 @@ const Chat = () => {
                 </span>
             </div>
             {/* Chat messages display */}
-            <div id="chat" className="chat-log">
+            <div id="chat" className="chat-log" ref={chatLog}>
                 {state.chatMessages.map((message, index) => {
                     // If entered by the logged in user
                     if (message.username === globalState.user.username) {
