@@ -66,7 +66,7 @@ const HomeGuest = () => {
                 }
                 // Username must not already exist
                 // If no above errors and is valid username - increment checkCount, and begin checking if username already exist (handled by "usernameUniqueResults")
-                if (!state.hasErrors) {
+                if (!state.username.hasErrors) {
                     obj2 = {
                         ...state,
                         ...state.username.checkCount++
@@ -91,15 +91,47 @@ const HomeGuest = () => {
                 }
                 return obj3
             case "emailImmediately":
+                // Set state
                 return {
                     ...state,
                     ...state.email.value = action.value,
                     ...state.email.hasErrors = false
                 }
             case "emailAfterDelay":
-                return
+                let obj4 = {}
+                // Email must be of valid email format  ....@...
+                if (!/^\S+@\S+$/.test(state.email.value)) {
+                    obj4 = {
+                        ...state,
+                        ...state.email.hasErrors = true,
+                        ...state.email.message = "You must provide a valid email address"
+                    }
+                }
+                // Email must be unique - Has someone already registered an acc with this email?
+                if (!state.email.hasErrors) {
+                    obj4 = {
+                        ...state,
+                        ...state.email.checkCount++
+                    }
+                }
+                return obj4
             case "emailUniqueResults":
-                return
+                let obj5 = {}
+                // if action.value is true (returns by server) - means username is already in use
+                if (action.value) {
+                    obj5 = {
+                        ...state,
+                        ...state.email.hasErrors = true,
+                        ...state.email.isUnique = false,
+                        ...state.email.message = "That email is already being used"
+                    }
+                } else {
+                    obj5 = {
+                        ...state,
+                        ...state.email.isUnique = true
+                    }
+                }
+                return obj5
             case "passwordImmediately":
                 return {
                     ...state,
@@ -123,7 +155,23 @@ const HomeGuest = () => {
         }
     }, [state.username.value])
 
-    // Watch state.username.checkCount for changes - 
+    useEffect(() => {
+        if (state.email.value) {
+            const delay = setTimeout(() => dispatch({ type: "emailAfterDelay" }), 800)
+
+            return () => clearTimeout(delay)
+        }
+    }, [state.email.value])
+
+    useEffect(() => {
+        if (state.password.value) {
+            const delay = setTimeout(() => dispatch({ type: "passwordAfterDelay" }), 800)
+
+            return () => clearTimeout(delay)
+        }
+    }, [state.password.value])
+
+    // Watch state.username.checkCount for changes - Check if username already exist
     useEffect(() => {
         // so that this won't run when component first renders
         if (state.username.checkCount) {
@@ -142,6 +190,26 @@ const HomeGuest = () => {
             return () => ourRequest.cancel()
         }
     }, [state.username.checkCount])
+
+    // Watch state.email.checkCount for changes - Check if email is already in use
+    useEffect(() => {
+        // so that this won't run when component first renders
+        if (state.email.checkCount) {
+            const ourRequest = Axios.CancelToken.source() // create cancel token to cancel req if component unmounts in the middle of the req
+
+            async function fetchResults() {
+                try {
+                    const response = await Axios.post('/doesEmailExist', { email: state.email.value }, { cancelToken: ourRequest.token })
+                    dispatch({ type: "emailUniqueResults", value: response.data})
+                } catch (err) {
+                    console.log("There was a problem or the request was cancelled.")
+                }
+            }
+            fetchResults()
+
+            return () => ourRequest.cancel()
+        }
+    }, [state.email.checkCount])
 
     const handleSubmit = (e) => {
         e.preventDefault();
