@@ -1,13 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import Axios from 'axios'
 import Page from './Page'
 import { useReducer } from 'react'
 import { CSSTransition } from 'react-transition-group'
 
 const HomeGuest = () => {
-    // const [username, setUsername] = useState("")
-    // const [email, setEmail] = useState("")
-    // const [password, setPassword] = useState("")
     const initialState = {
         username: {
             value: "",
@@ -43,7 +40,7 @@ const HomeGuest = () => {
                 // Username cannot be > 30 characters
                 if (state.username.value.length > 30) {
                     newObj = {
-                        ...state, 
+                        ...state,
                         ...state.username.hasErrors = true,
                         ...state.username.message = "Username cannot exeed 30 characters"
                     }
@@ -51,14 +48,23 @@ const HomeGuest = () => {
                 // Username must be alphanumeric (letters and numbers)
                 if (state.username.value && !/^([a-zA-Z0-9]+)$/.test(state.username.value)) { // Check not empty &
                     newObj = {
-                        ...state, 
+                        ...state,
                         ...state.username.hasErrors = true,
                         ...state.username.message = "Username cannot only contain letters and numbers"
                     }
                 }
                 return newObj;
             case "usernameAfterDelay":
-                return
+                let obj = {}
+                // Username cannot be less than 3 chars
+                if (state.username.value.length < 3) {
+                    obj = {
+                        ...state,
+                        ...state.username.hasErrors = true,
+                        ...state.username.message = "Username must be at least 3 characters"
+                    }
+                }
+                return obj
             case "usernameUniqueResults":
                 return
             case "emailImmediately":
@@ -85,6 +91,14 @@ const HomeGuest = () => {
     }
 
     const [state, dispatch] = useReducer(ourReducer, initialState)
+
+    useEffect(() => {
+        if (state.username.value) {
+            const delay = setTimeout(() => dispatch({ type: "usernameAfterDelay" }), 800)
+
+            return () => clearTimeout(delay)
+        }
+    }, [state.username.value])
 
     const handleSubmit = (e) => {
         e.preventDefault();
