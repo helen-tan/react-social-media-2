@@ -34,6 +34,7 @@ const HomeGuest = () => {
     const ourReducer = (state, action) => {
         switch (action.type) {
             case "usernameImmediately":
+                // Set state in an object first
                 let newObj = {
                     ...state,
                     ...state.username.value = action.value,
@@ -45,6 +46,14 @@ const HomeGuest = () => {
                         ...state, 
                         ...state.username.hasErrors = true,
                         ...state.username.message = "Username cannot exeed 30 characters"
+                    }
+                }
+                // Username must be alphanumeric (letters and numbers)
+                if (state.username.value && !/^([a-zA-Z0-9]+)$/.test(state.username.value)) { // Check not empty &
+                    newObj = {
+                        ...state, 
+                        ...state.username.hasErrors = true,
+                        ...state.username.message = "Username cannot only contain letters and numbers"
                     }
                 }
                 return newObj;
