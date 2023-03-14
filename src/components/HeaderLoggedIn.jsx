@@ -4,7 +4,7 @@ import DispatchContext from '../DispatchContext'
 import StateContext from '../StateContext'
 import { Tooltip } from 'react-tooltip'
 
-const HeaderLoggedIn = (props) => {
+const HeaderLoggedIn = () => {
 
     // Get setLoggedIn method in the parent App.js from the Context
     const globalDispatch = useContext(DispatchContext)
@@ -31,22 +31,29 @@ const HeaderLoggedIn = (props) => {
             <a data-tooltip-id="search-tooltip" data-tooltip-content="Search" onClick={handleSearchIcon} href="#" className="text-white mr-2 header-search-icon">
                 <i className="fas fa-search"></i>
             </a>
-            <Tooltip id="search-tooltip" place="bottom" className="custom-tooltip"/>
+            <Tooltip id="search-tooltip" place="bottom" className="custom-tooltip" />
 
             {" "}
 
-            <span onClick={() => globalDispatch({ type: "toggleChat" })} data-tooltip-id="chat-tooltip" data-tooltip-content="Chat" className="mr-2 header-chat-icon text-white">
+            <span onClick={() => globalDispatch({ type: "toggleChat" })} data-tooltip-id="chat-tooltip" data-tooltip-content="Chat" className={"mr-2 header-chat-icon " + (globalState.unreadChatCount ? "text-danger" : "text-white")}>
                 <i className="fas fa-comment"></i>
-                <span className="chat-count-badge text-white"> </span>
+                {/* Conditionally render the unread msg count badge */}
+                {globalState.unreadChatCount ?
+                    <span className="chat-count-badge text-white">
+                        {globalState.unreadChatCount < 10 ? globalState.unreadChatCount : "9+"}
+                    </span>
+                    :
+                    ""
+                }
             </span>
-            <Tooltip id="chat-tooltip" place="bottom" className="custom-tooltip"/>
+            <Tooltip id="chat-tooltip" place="bottom" className="custom-tooltip" />
 
             {" "}
 
             <Link data-tooltip-id="profile-tooltip" data-tooltip-content="My Profile" to={`/profile/${globalState.user.username}`} className="mr-2">
                 <img className="small-header-avatar" src={globalState.user.avatar} />
             </Link>
-            <Tooltip id="profile-tooltip" place="bottom" className="custom-tooltip"/>
+            <Tooltip id="profile-tooltip" place="bottom" className="custom-tooltip" />
 
             {" "}
 
@@ -55,7 +62,7 @@ const HeaderLoggedIn = (props) => {
             </Link>
 
             {" "}
-            
+
             <button onClick={handleLogout} className="btn btn-sm btn-secondary">
                 Sign Out
             </button>

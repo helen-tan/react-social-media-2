@@ -34,15 +34,24 @@ const Chat = () => {
         })
     }, [])
 
+    // Watch isChatOpen changes
     useEffect(() => {
         if (globalState.isChatOpen) {
-            chatField.current.focus()
+            chatField.current.focus()                           // focus on input field
+            globalDispatch({ type: "clearUnreadChatCount" })    // Clear no. of unread msg in global state
         }
     }, [globalState.isChatOpen])
 
-    // Whenever a new message is pushed into the collection, scroll the chatlog div down to the bottom
+    // Watch for new chat messages
     useEffect(() => {
+        // Whenever a new message is pushed into the collection, scroll the chatlog div down to the bottom
         chatLog.current.scrollTop = chatLog.current.scrollHeight
+
+        // Don't run when component is first rendered, when chatMessages = 0
+        // Run if there are new messages & when chat is not open
+        if (state.chatMessages.length && !globalState.isChatOpen) {
+            globalDispatch({ type: "incrementUnreadChatCount" })
+        }
     }, [state.chatMessages])
 
 

@@ -40,7 +40,8 @@ function App() {
       username: sessionStorage.getItem("username")
     },
     isSearchOpen: false,
-    isChatOpen: false
+    isChatOpen: false,
+    unreadChatCount: 0
   }
 
   function ourReducer(state, action) {
@@ -63,6 +64,10 @@ function App() {
         return { ...state, ...state.isChatOpen = !state.isChatOpen }
       case "closeChat":
         return { ...state, ...state.isChatOpen = false }
+      case "incrementUnreadChatCount":
+        return { ...state, ...state.unreadChatCount++ }
+      case "clearUnreadChatCount":
+        return { ...state, ...state.unreadChatCount = 0 }
     }
   }
   // useReducer
