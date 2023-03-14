@@ -55,7 +55,7 @@ const HomeGuest = () => {
                 }
                 return obj1;
             case "usernameAfterDelay":
-                let obj2 = {}
+                let obj2 = {...state}
                 // Username cannot be less than 3 chars
                 if (state.username.value.length < 3) {
                     obj2 = {
@@ -74,7 +74,7 @@ const HomeGuest = () => {
                 }
                 return obj2
             case "usernameUniqueResults":
-                let obj3 = {}
+                let obj3 = {...state}
                 // if action.value is true (returns by server) - means username is already in use
                 if (action.value) {
                     obj3 = {
@@ -98,7 +98,7 @@ const HomeGuest = () => {
                     ...state.email.hasErrors = false
                 }
             case "emailAfterDelay":
-                let obj4 = {}
+                let obj4 = {...state}
                 // Email must be of valid email format  ....@...
                 if (!/^\S+@\S+$/.test(state.email.value)) {
                     obj4 = {
@@ -116,7 +116,7 @@ const HomeGuest = () => {
                 }
                 return obj4
             case "emailUniqueResults":
-                let obj5 = {}
+                let obj5 = {...state}
                 // if action.value is true (returns by server) - means username is already in use
                 if (action.value) {
                     obj5 = {
@@ -133,13 +133,33 @@ const HomeGuest = () => {
                 }
                 return obj5
             case "passwordImmediately":
-                return {
+                let obj6 = {...state}
+                // Set state
+                obj6 = {
                     ...state,
                     ...state.password.value = action.value,
                     ...state.password.hasErrors = false
                 }
+                // Password must not be > 50 characters
+                if (state.password.value.length > 50) {
+                    obj6 = {
+                        ...state,
+                        ...state.password.hasErrors = true,
+                        ...state.password.message = "Password cannot exceed 50 characters"
+                    }
+                }
+                return obj6
             case "passwordAfterDelay":
-                return
+                let obj7 = {...state}
+                // Password must be at least 12 characters
+                if (state.password.value.length < 12) {
+                    obj7 = {
+                        ...state,
+                        ...state.password.hasErrors = true,
+                        ...state.password.message = "Password must have at least 12 characters"
+                    }
+                }
+                return obj7
             case "submitForm":
                 return
         }
@@ -238,18 +258,29 @@ const HomeGuest = () => {
                                 <div className='alert alert-danger small liveValidateMessage'>{state.username.message}</div>
                             </CSSTransition>
                         </div>
+
                         <div className="form-group">
                             <label htmlFor="email-register" className="text-muted mb-1">
                                 <small>Email</small>
                             </label>
                             <input onChange={e => dispatch({ type: "emailImmediately", value: e.target.value })} value={state.email.value} id="email-register" name="email" className="form-control" type="text" placeholder="you@example.com" autoComplete="off" />
+                            {/* Email validation error message */}
+                            <CSSTransition in={state.email.hasErrors} timeout={330} classNames="liveValidateMessage" unmountOnExit>
+                                <div className='alert alert-danger small liveValidateMessage'>{state.email.message}</div>
+                            </CSSTransition>
                         </div>
+
                         <div className="form-group">
                             <label htmlFor="password-register" className="text-muted mb-1">
                                 <small>Password</small>
                             </label>
                             <input onChange={e => dispatch({ type: "passwordImmediately", value: e.target.value })} value={state.password.value} id="password-register" name="password" className="form-control" type="password" placeholder="Create a password" />
+                            {/* Password validation error message */}
+                            <CSSTransition in={state.password.hasErrors} timeout={330} classNames="liveValidateMessage" unmountOnExit>
+                                <div className='alert alert-danger small liveValidateMessage'>{state.password.message}</div>
+                            </CSSTransition>                        
                         </div>
+
                         <button type="submit" className="py-3 mt-4 btn btn-lg btn-success btn-block">
                             Sign up for ComplexApp
                         </button>
