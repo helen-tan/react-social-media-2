@@ -1,10 +1,13 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import Axios from 'axios'
 import Page from './Page'
 import { useReducer } from 'react'
 import { CSSTransition } from 'react-transition-group'
+import DispatchContext from '../DispatchContext'
 
 const HomeGuest = () => {
+    const globalDispatch = useContext(DispatchContext)
+
     const initialState = {
         username: {
             value: "",
@@ -25,7 +28,7 @@ const HomeGuest = () => {
             hasErrors: false,
             message: "",
         },
-        submitCount: 0
+        submitCount: { submitCount: 0 }
     }
 
     const ourReducer = (state, action) => {
@@ -55,7 +58,7 @@ const HomeGuest = () => {
                 }
                 return obj1;
             case "usernameAfterDelay":
-                let obj2 = {...state}
+                let obj2 = { ...state }
                 // Username cannot be less than 3 chars
                 if (state.username.value.length < 3) {
                     obj2 = {
@@ -66,7 +69,7 @@ const HomeGuest = () => {
                 }
                 // Username must not already exist
                 // If no above errors and is valid username - increment checkCount, and begin checking if username already exist (handled by "usernameUniqueResults")
-                if (!state.username.hasErrors) {
+                if (!state.username.hasErrors && !action.noRequest) { // !action.noRequest - don't check for unique when submitting the form
                     obj2 = {
                         ...state,
                         ...state.username.checkCount++
@@ -74,7 +77,7 @@ const HomeGuest = () => {
                 }
                 return obj2
             case "usernameUniqueResults":
-                let obj3 = {...state}
+                let obj3 = { ...state }
                 // if action.value is true (returns by server) - means username is already in use
                 if (action.value) {
                     obj3 = {
@@ -98,7 +101,7 @@ const HomeGuest = () => {
                     ...state.email.hasErrors = false
                 }
             case "emailAfterDelay":
-                let obj4 = {...state}
+                let obj4 = { ...state }
                 // Email must be of valid email format  ....@...
                 if (!/^\S+@\S+$/.test(state.email.value)) {
                     obj4 = {
@@ -108,7 +111,7 @@ const HomeGuest = () => {
                     }
                 }
                 // Email must be unique - Has someone already registered an acc with this email?
-                if (!state.email.hasErrors) {
+                if (!state.email.hasErrors && !action.noRequest) {
                     obj4 = {
                         ...state,
                         ...state.email.checkCount++
@@ -116,7 +119,7 @@ const HomeGuest = () => {
                 }
                 return obj4
             case "emailUniqueResults":
-                let obj5 = {...state}
+                let obj5 = { ...state }
                 // if action.value is true (returns by server) - means username is already in use
                 if (action.value) {
                     obj5 = {
@@ -133,7 +136,7 @@ const HomeGuest = () => {
                 }
                 return obj5
             case "passwordImmediately":
-                let obj6 = {...state}
+                let obj6 = { ...state }
                 // Set state
                 obj6 = {
                     ...state,
@@ -150,7 +153,7 @@ const HomeGuest = () => {
                 }
                 return obj6
             case "passwordAfterDelay":
-                let obj7 = {...state}
+                let obj7 = { ...state }
                 // Password must be at least 12 characters
                 if (state.password.value.length < 12) {
                     obj7 = {
@@ -161,7 +164,40 @@ const HomeGuest = () => {
                 }
                 return obj7
             case "submitForm":
-                return
+                let obj8 = { ...state }
+                if (!state.username.hasErrors && state.username.isUnique
+                    && !state.email.hasErrors && state.email.isUnique
+                    && !state.password.hasErrors) {
+                    obj8 = {
+                        ...state,
+                        ...state.submitCount.submitCount++
+                    }
+                }
+                return obj8
+            case "clearState":
+                let obj9 = {
+                    username: {
+                        value: "",
+                        hasErrors: false,
+                        message: "",
+                        isUnique: false,
+                        checkCount: 0
+                    },
+                    email: {
+                        value: "",
+                        hasErrors: false,
+                        message: "",
+                        isUnique: false,
+                        checkCount: 0
+                    },
+                    password: {
+                        value: "",
+                        hasErrors: false,
+                        message: "",
+                    },
+                    submitCount: { submitCount: 0 }
+                }
+            return obj9
         }
     }
 
@@ -200,7 +236,7 @@ const HomeGuest = () => {
             async function fetchResults() {
                 try {
                     const response = await Axios.post('/doesUsernameExist', { username: state.username.value }, { cancelToken: ourRequest.token })
-                    dispatch({ type: "usernameUniqueResults", value: response.data})
+                    dispatch({ type: "usernameUniqueResults", value: response.data })
                 } catch (err) {
                     console.log("There was a problem or the request was cancelled.")
                 }
@@ -220,7 +256,7 @@ const HomeGuest = () => {
             async function fetchResults() {
                 try {
                     const response = await Axios.post('/doesEmailExist', { email: state.email.value }, { cancelToken: ourRequest.token })
-                    dispatch({ type: "emailUniqueResults", value: response.data})
+                    dispatch({ type: "emailUniqueResults", value: response.data })
                 } catch (err) {
                     console.log("There was a problem or the request was cancelled.")
                 }
@@ -231,10 +267,51 @@ const HomeGuest = () => {
         }
     }, [state.email.checkCount])
 
+    // Watch state.submitCount for changes 
+    useEffect(() => {
+        // so that this won't run when component first renders
+        if (state.submitCount.submitCount) {
+            const ourRequest = Axios.CancelToken.source() // create cancel token to cancel req if component unmounts in the middle of the req
+
+            async function fetchResults() {
+                try {
+                    const response = await Axios.post('/register',
+                        {
+                            username: state.username.value,
+                            email: state.email.value,
+                            password: state.password.value
+                        }
+                        , { cancelToken: ourRequest.token })
+                    // Log successfully registered user in
+                    // globalDispatch({ type: "login", data: response.data })
+            
+                    // Show flash message
+                    globalDispatch({ type: "flashMessage", value: "Congrats! You have signed up."})
+
+                    dispatch({ type: "clearState" })
+                } catch (err) {
+                    console.log("There was a problem or the request was cancelled.")
+                }
+            }
+            fetchResults()
+
+            return () => ourRequest.cancel()
+        }
+    }, [state.submitCount.submitCount])
+
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log("click")
 
-
+        // Run validation rules again before bothering server
+        dispatch({ type: "usernameImmediately", value: state.username.value })
+        dispatch({ type: "usernameAfterDelay", value: state.username.value, noRequest: true })
+        dispatch({ type: "emailImmediately", value: state.email.value })
+        dispatch({ type: "emailAfterDelay", value: state.email.value, noRequest: true })
+        dispatch({ type: "passwordImmediately", value: state.password.value })
+        dispatch({ type: "passwordAfterDelay", value: state.password.value })
+        // Submit form
+        dispatch({ type: "submitForm" })
     }
 
     return (
@@ -278,7 +355,7 @@ const HomeGuest = () => {
                             {/* Password validation error message */}
                             <CSSTransition in={state.password.hasErrors} timeout={330} classNames="liveValidateMessage" unmountOnExit>
                                 <div className='alert alert-danger small liveValidateMessage'>{state.password.message}</div>
-                            </CSSTransition>                        
+                            </CSSTransition>
                         </div>
 
                         <button type="submit" className="py-3 mt-4 btn btn-lg btn-success btn-block">
