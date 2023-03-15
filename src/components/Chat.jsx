@@ -4,10 +4,10 @@ import DispatchContext from '../DispatchContext'
 import { useImmer } from 'use-immer'
 import { io } from 'socket.io-client'
 import { Link } from 'react-router-dom'
-// Establish an ongoing bidirectional connection between the browser and the backend server
-const socket = io("http://localhost:8080")
 
 const Chat = () => {
+    const socket = useRef(null)
+
     const globalState = useContext(StateContext)
     const globalDispatch = useContext(DispatchContext)
 
@@ -24,14 +24,20 @@ const Chat = () => {
 
     // Run the 1st time component renders - Frontend to begin listening for an event called "chatFromServer"
     useEffect(() => {
-        socket.removeAllListeners()
+        // Establish an ongoing bidirectional connection between the browser and the backend server
+        socket.current = io("http://localhost:8080")
+
+        socket.current.removeAllListeners()
         // Arg 1: Name of event the server will emit to use (programmed in backend)
         // Arg 2: Function that will run whenever the specified event in Arg 1 happens
-        socket.on("chatFromServer", message => {
+        socket.current.on("chatFromServer", message => {
             setState(draft => {
                 draft.chatMessages.push(message)
             })
         })
+
+        // End socket connection
+        return () => socket.current.disconnect()
     }, [])
 
     // Watch isChatOpen changes
@@ -67,7 +73,7 @@ const Chat = () => {
         e.preventDefault()
         // Send message to chat server - Server will broadcast to connected users
         // Server will listen to an event "chatFromBrowser"
-        socket.emit("chatFromBrowser", {
+        socket.current.emit("chatFromBrowser", {
             message: state.fieldValue,
             token: globalState.user.token
         })
