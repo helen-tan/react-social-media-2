@@ -18,7 +18,7 @@ import FlashMessages from "./components/FlashMessages";
 import Profile from "./components/Profile";
 import EditPost from "./components/EditPost";
 import NotFound from "./components/NotFound";
-import Search from "./components/Search";
+// LAzy Loaded this --> // import Search from "./components/Search";
 import Chat from "./components/Chat";
 
 // Context
@@ -32,6 +32,7 @@ Axios.defaults.baseURL = 'http://localhost:8080'
 // Lazy Loading
 const CreatePost = React.lazy(() => import("./components/CreatePost"));
 const ViewSinglePost = React.lazy(() => import("./components/ViewSinglePost"))
+const Search = React.lazy(() => import("./components/Search"))
 
 function App() {
 
@@ -152,8 +153,16 @@ function App() {
           </Suspense>
 
           {/* {state.isSearchOpen ? <Search />: ''} */}
-          <CSSTransition timeout={330} in={state.isSearchOpen} classNames="search-overlay" unmountOnExit>
+          {/* Lazy Loading Search (nested in CSSTransition) */}
+          {/* <CSSTransition timeout={330} in={state.isSearchOpen} classNames="search-overlay" unmountOnExit>
             <Search />
+          </CSSTransition> */}
+          <CSSTransition timeout={330} in={state.isSearchOpen} classNames="search-overlay" unmountOnExit>
+            <div className="search-overlay">
+              <Suspense fallback="">
+                <Search />
+              </Suspense>
+            </div>
           </CSSTransition>
 
           <Chat />
