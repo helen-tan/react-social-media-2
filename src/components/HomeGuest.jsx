@@ -301,7 +301,6 @@ const HomeGuest = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("click")
 
         // Run validation rules again before bothering server
         dispatch({ type: "usernameImmediately", value: state.username.value })
