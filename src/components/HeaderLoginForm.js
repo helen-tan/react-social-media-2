@@ -22,7 +22,6 @@ const HeaderLoginForm = (props) => {
 
             if (response.data) {
                 console.log(response.data)
-
                 // Save token & image to sessionStorage - Handled usign Reducer (globalDispatch)
                 // sessionStorage.setItem("token", response.data.token)
                 // sessionStorage.setItem("avatar", response.data.avatar)
@@ -34,9 +33,10 @@ const HeaderLoginForm = (props) => {
                 setPassword("")
 
                 // setLoggedIn(true)
+                globalDispatch({ type: "flashMessage", value: "Login successful" })
                 globalDispatch({ type: "login", data: response.data})
             } else {
-                console.log("Incorrect username or password")
+                globalDispatch({ type: "flashMessage", value: "Incorrect username or password" })
             }
 
         } catch (err) {

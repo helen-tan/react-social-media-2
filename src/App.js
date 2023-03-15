@@ -49,14 +49,14 @@ function App() {
       case "login":
         return {
           ...state,
-          ...state.loggedIn = true,
-          ...state.flashMessages = state.flashMessages,
-          ...state.user = action.data
+          loggedIn: true,
+          flashMessages: state.flashMessages,
+          user: action.data
         }
       case "logout":
-        return { ...state, ...state.loggedIn= false, ...state.flashMessages = state.flashMessages }
+        return { ...state, ...state.loggedIn = false, ...state.flashMessages = state.flashMessages }
       case "flashMessage":
-        return { ...state, ...state.loggedIn = state.login, ...state.flashMessages = state.flashMessages.concat(action.value) }
+        return { ...state, loggedIn: state.login, flashMessages: state.flashMessages.concat(action.value) }
       case "openSearch":
         return { ...state, ...state.isSearchOpen = true }
       case "closeSearch":

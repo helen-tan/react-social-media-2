@@ -17,6 +17,7 @@ const HeaderLoggedIn = () => {
         // Remove token & avatar from sessionStorage // Handled by App.js useEffect & Reducer
         // sessionStorage.removeItem("token")
         // sessionStorage.removeItem("avatar")
+        globalDispatch({ type: "flashMessage", value: "You have successfully logged out" })
 
         navigate("/home")
     }
