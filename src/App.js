@@ -18,8 +18,8 @@ import FlashMessages from "./components/FlashMessages";
 import Profile from "./components/Profile";
 import EditPost from "./components/EditPost";
 import NotFound from "./components/NotFound";
-// LAzy Loaded this --> // import Search from "./components/Search";
-import Chat from "./components/Chat";
+// Lazy Loaded this --> // import Search from "./components/Search";
+// Lazy Loaded this --> // import Chat from "./components/Chat";
 
 // Context
 import StateContext from "./StateContext";
@@ -33,6 +33,7 @@ Axios.defaults.baseURL = 'http://localhost:8080'
 const CreatePost = React.lazy(() => import("./components/CreatePost"));
 const ViewSinglePost = React.lazy(() => import("./components/ViewSinglePost"))
 const Search = React.lazy(() => import("./components/Search"))
+const Chat = React.lazy(() => import("./components/Chat"))
 
 function App() {
 
@@ -165,7 +166,9 @@ function App() {
             </div>
           </CSSTransition>
 
-          <Chat />
+          <Suspense fallback="">
+            {state.loggedIn && <Chat />}
+          </Suspense>
 
           <Footer />
         </BrowserRouter>
