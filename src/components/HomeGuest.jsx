@@ -197,7 +197,7 @@ const HomeGuest = () => {
                     },
                     submitCount: { submitCount: 0 }
                 }
-            return obj9
+                return obj9
         }
     }
 
@@ -283,10 +283,10 @@ const HomeGuest = () => {
                         }
                         , { cancelToken: ourRequest.token })
                     // Log successfully registered user in
-                    // globalDispatch({ type: "login", data: response.data })
-            
+                    // globalDispatch({ type: "login", data: response.data }) //Doesn't work somehow..
+
                     // Show flash message
-                    globalDispatch({ type: "flashMessage", value: "Congrats! You have signed up."})
+                    globalDispatch({ type: "flashMessage", value: "Congrats! You have created a new account." })
 
                     dispatch({ type: "clearState" })
                 } catch (err) {

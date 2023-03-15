@@ -48,14 +48,15 @@ function App() {
     switch (action.type) {
       case "login":
         return {
-          loggedIn: true,
-          flashMessages: state.flashMessages,
-          user: action.data
+          ...state,
+          ...state.loggedIn = true,
+          ...state.flashMessages = state.flashMessages,
+          ...state.user = action.data
         }
       case "logout":
-        return { loggedIn: false, flashMessages: state.flashMessages }
+        return { ...state, ...state.loggedIn= false, ...state.flashMessages = state.flashMessages }
       case "flashMessage":
-        return { loggedIn: state.login, flashMessages: state.flashMessages.concat(action.value) }
+        return { ...state, ...state.loggedIn = state.login, ...state.flashMessages = state.flashMessages.concat(action.value) }
       case "openSearch":
         return { ...state, ...state.isSearchOpen = true }
       case "closeSearch":
