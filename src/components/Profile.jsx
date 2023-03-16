@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useImmer } from 'use-immer'
 import { useParams, NavLink, Routes, Route } from "react-router-dom"
 import Axios from 'axios'
@@ -7,8 +7,10 @@ import Page from './Page'
 import ProfilePosts from './ProfilePosts'
 import ProfileFollowers from './ProfileFollowers'
 import ProfileFollowing from './ProfileFollowing'
+import NotFound from './NotFound'
 
 const Profile = () => {
+    const [notFound, setNotFound] = useState(false) 
     const { username } = useParams() // Get the username segment of the url
 
     const globalState = useContext(StateContext)
@@ -22,7 +24,8 @@ const Profile = () => {
             profileAvatar: "https://gravatar.com/avatar/placeholder?s=128",
             isFollowing: false,
             counts: { postCounts: "", followerCount: "", followingCount: "" }
-        }
+        },
+        notFound: false
     })
 
     useEffect(() => {
@@ -33,10 +36,16 @@ const Profile = () => {
             try {
                 const response = await Axios.post(`/profile/${username}`, { token: globalState.user.token })
                 // console.log(response.data)
-
-                setState(draft => {
-                    draft.profileData = response.data
-                })
+                if (response.data) {
+                    setState(draft => {
+                        draft.profileData = response.data
+                        draft.notFound = false
+                    })
+                } else {
+                    setState(draft => { 
+                        draft.notFound = true
+                    })
+                }
             } catch (err) {
                 console.log("There was a problem.")
             }
@@ -45,6 +54,7 @@ const Profile = () => {
         fetchData()
 
         return () => {
+            setNotFound(false)
             ourRequest.cancel()
         }
     }, [username])
@@ -127,6 +137,14 @@ const Profile = () => {
         setState(draft => {
             draft.stopFollowingRequestCount++
         })
+    }
+
+    if (state.notFound) {
+        return (
+            <Page title="Profile not found!">
+                <NotFound />
+            </Page>
+        ) 
     }
 
     return (
