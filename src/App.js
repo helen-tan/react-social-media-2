@@ -27,7 +27,7 @@ import DispatchContext from "./DispatchContext";
 
 import Axios from "axios"
 // Set the domain (beginning portion) for all axios request
-Axios.defaults.baseURL = 'http://localhost:8080'
+Axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL || ""
 
 // Lazy Loading
 const CreatePost = React.lazy(() => import("./components/CreatePost"));
