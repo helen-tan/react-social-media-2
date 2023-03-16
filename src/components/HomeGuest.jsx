@@ -286,7 +286,7 @@ const HomeGuest = () => {
                     // globalDispatch({ type: "login", data: response.data }) //Doesn't work somehow..
 
                     // Show flash message
-                    globalDispatch({ type: "flashMessage", value: "Congrats! You have created a new account." })
+                    globalDispatch({ type: "flashMessage", value: {message: "Congrats! You have created a new account.", color: "success"}})
 
                     dispatch({ type: "clearState" })
                 } catch (err) {

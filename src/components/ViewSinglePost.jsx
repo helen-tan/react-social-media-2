@@ -57,7 +57,7 @@ const ViewSinglePost = () => {
                 const response = await Axios.delete(`/post/${id}`, { data: {token: globalState.user.token} })
                 if (response.data === "Success") {
                     // 1. Display flash message
-                    globalDispatch({ type: "flashMessage", value: "Post as successfully deleted." })
+                    globalDispatch({ type: "flashMessage", value: { message: "Post was successfully deleted.", color: "success" }})
                     // 2. Redirect back to current user's profile
                     navigate(`/profile/${globalState.user.username}`)
                 }

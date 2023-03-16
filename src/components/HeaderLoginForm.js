@@ -23,7 +23,7 @@ const HeaderLoginForm = (props) => {
         e.preventDefault()
 
         if (usernameIsBlank || passwordIsBlank) {
-            globalDispatch({ type: "flashMessage", value: "Please enter your username or password" })
+            globalDispatch({ type: "flashMessage", value: {message: "Please enter your username or password", color: "info"}})
             // This should only fire when submit is clicked after first render, to replace initial null values with an empty string
             if (username === null) setUsername("")
             if (password === null) setPassword("")
@@ -45,10 +45,10 @@ const HeaderLoginForm = (props) => {
                     setPassword("")
     
                     // setLoggedIn(true)
-                    globalDispatch({ type: "flashMessage", value: "Login successful" })
+                    globalDispatch({ type: "flashMessage", value: {message: "Login successful", color: "success"} })
                     globalDispatch({ type: "login", data: response.data})
                 } else {
-                    globalDispatch({ type: "flashMessage", value: "Incorrect username or password" })
+                    globalDispatch({ type: "flashMessage", value: {message: "Incorrect username or password", color: "danger"} })
                 }
     
             } catch (err) {

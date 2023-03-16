@@ -134,7 +134,7 @@ const EditPost = () => {
 
                     // Check if current user (username) matches the author of the post
                     if (globalState.user.username !== response.data.author.username) {
-                        globalDispatch({ type: "flashMessage", value: "You do not have permission to edit that post" })
+                        globalDispatch({ type: "flashMessage", value: { message: "You do not have permission to edit that post", color: "danger" }})
                         // redirect to homepage
                         navigate("/home")
                     }
@@ -174,7 +174,7 @@ const EditPost = () => {
                     // console.log(response.data)
 
                     dispatch({ type: "saveRequestFinished" })
-                    globalDispatch({ type: "flashMessage", value: "Post was updated" })
+                    globalDispatch({ type: "flashMessage", value: { message: "Post was updated", color: "success" }})
                 } catch (err) {
                     console.log("There was a problem, or the request was cancelled.")
                 }
