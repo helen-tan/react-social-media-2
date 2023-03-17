@@ -15,12 +15,13 @@ const ViewSinglePost = () => {
     const [post, setPost] = useState()
     const { id } = useParams()
 
-    const globalState= useContext(StateContext)
+    const globalState = useContext(StateContext)
     const globalDispatch = useContext(DispatchContext)
 
     const navigate = useNavigate()
 
     useEffect(() => {
+     
         const ourRequest = Axios.CancelToken.source() // A way of identifying an Axios request
 
         async function fetchPost() {
@@ -54,10 +55,10 @@ const ViewSinglePost = () => {
         const areYouSure = window.confirm("Do you really want to delete this post?")
         if (areYouSure) {
             try {
-                const response = await Axios.delete(`/post/${id}`, { data: {token: globalState.user.token} })
+                const response = await Axios.delete(`/post/${id}`, { data: { token: globalState.user.token } })
                 if (response.data === "Success") {
                     // 1. Display flash message
-                    globalDispatch({ type: "flashMessage", value: { message: "Post was successfully deleted.", color: "success" }})
+                    globalDispatch({ type: "flashMessage", value: { message: "Post was successfully deleted.", color: "success" } })
                     // 2. Redirect back to current user's profile
                     navigate(`/profile/${globalState.user.username}`)
                 }

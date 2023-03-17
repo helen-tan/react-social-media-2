@@ -28,12 +28,12 @@ const CreatePost = (props) => {
             setTitle("")
             setBody("")
 
-            // Redirect to new post url
+            // addFlashMessage("Post successfully created!") // use globalDispatch instead
             globalDispatch({
                 type: "flashMessage",
                 value: { message: "Post successfully created!", color: "success"}
             })
-            // addFlashMessage("Post successfully created!") // use globalDispatch instead
+            // Redirect to new post url
             navigate(`/post/${response.data}`);
 
         } catch (err) {
