@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import DispatchContext from '../DispatchContext'
 import StateContext from '../StateContext'
 import { Tooltip } from 'react-tooltip'
+import 'react-tooltip/dist/react-tooltip.css'
 
 const HeaderLoggedIn = () => {
 
